@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+
+{% load crispy_forms_tags %}
+
+
+{% block content %}
+
+
+ <br>
+
+        <div class="container bg-white shadow-md p-5 form-layout">
+            <div class-"text-align: center;">
+<h3> Login to the account </h3>
+
+
+            </div>
+            
+                 
+               
+
+
+            <hr>
+            <br>
+
+    <form method="POST" autocomplete="off">
+
+                {% csrf_token %}
+
+
+
+                {{form.email|as_crispy_field}}
+
+                <br> <br>
+
+
+                {{form.password|as_crispy_field}}
+
+                <br> <br>
+
+                
+                <button type="submit" class="btn btn-primary navbar-btn text-white w-100 p-2"> &nbsp; Login in </button>
+
+                <br> <br>
+
+                <div class="text-center">
+
+                    <a href="#"> Don't have account? Register </a>
+
+                </div>
+
+
+            </form>
+
+
+            
+
+        </div>
+
+
+
+    </body>
+
+    <br> <br>
+
+
+{% endblock content %}

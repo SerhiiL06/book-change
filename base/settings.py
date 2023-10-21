@@ -25,6 +25,12 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    # email verification
+    "django_email_verification",
+    # crispy
+    "crispy_forms",
+    "crispy_bootstrap5",
+    # my_apps
     "books",
     "users",
 ]
@@ -56,6 +62,13 @@ TEMPLATES = [
         },
     },
 ]
+
+# Crispy templates
+
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
+
+CRISPY_TEMPLATE_PACK = "bootstrap5"
+
 
 WSGI_APPLICATION = "base.wsgi.application"
 
@@ -116,4 +129,39 @@ STATIC_URL = "static/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+
+# Users
+
 AUTH_USER_MODEL = "users.User"
+
+LOGIN_REDIRECT_URL = "books:index"
+
+# Email verification
+
+
+def email_verified_callback(user):
+    user.is_active = True
+
+
+# Global Package Settings
+EMAIL_FROM_ADDRESS = "sergiy06061997@gmail.com"  # mandatory
+EMAIL_PAGE_DOMAIN = "http://127.0.0.1:8000/"  # mandatory (unless you use a custom link)
+EMAIL_MULTI_USER = False  # optional (defaults to False)
+
+# Email Verification Settings (mandatory for email sending)
+EMAIL_MAIL_SUBJECT = "Confirm your email {{ user.username }}"
+EMAIL_MAIL_HTML = "users/register/mail_body.html"
+EMAIL_MAIL_PLAIN = "users/register/mail_body.txt"
+EMAIL_MAIL_TOKEN_LIFE = 60 * 60  # one hour
+
+# Email Verification Settings (mandatory for builtin view)
+EMAIL_MAIL_PAGE_TEMPLATE = "users/register/email-verification-success.html"
+EMAIL_MAIL_CALLBACK = email_verified_callback
+
+
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_PORT = 587
+EMAIL_HOST_USER = "sergiy06061997@gmail.com"
+EMAIL_HOST_PASSWORD = "mwkz ypvg oviq occk"  # os.environ['password_key'] suggested
+EMAIL_USE_TLS = True
