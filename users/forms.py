@@ -32,7 +32,7 @@ class LoginForm(AuthenticationForm):
         fields = ["email", "password"]
 
 
-class ProfileForm(UserChangeForm):
+class ProfileForm(forms.ModelForm):
     email = forms.EmailField(widget=forms.EmailInput(attrs={"readonly": True}))
     first_name = forms.CharField()
     last_name = forms.CharField()

@@ -37,7 +37,7 @@
             {{user.email}}
           </a>
           <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="{% url "users:profile" %}">Profile</a></li>
+            <li><a class="dropdown-item" href="{% url "users:another-user" user.id%}">Profile</a></li>
             <li><a class="dropdown-item" href="#">My books</a></li>
             {% if user.is_staff %}
             <li><a class="dropdown-item" href="#">Admin page</a></li>

@@ -2,7 +2,7 @@ from typing import Any
 from django.db import models
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect, HttpResponseRedirect
-from django.views.generic import CreateView, UpdateView
+from django.views.generic import CreateView, UpdateView, DetailView
 from django.contrib.auth.views import LoginView
 from django.contrib.auth import login, authenticate
 from django_email_verification import send_email
@@ -60,12 +60,14 @@ class ProfileView(UpdateView):
         return self.request.user
 
     def post(self, request, *args, **kwargs):
-        form = ProfileForm(request.POST, instance=request.user)
-        print(request.POST)
+        form = ProfileForm(request.POST, request.FILES, instance=request.user)
 
         if form.is_valid():
-            user = form.save()
-            user.image = request.POST.get("image")
-            user.save()
+            form.save()
 
         return HttpResponseRedirect(request.META["HTTP_REFERER"])
+
+
+class UserProfile(DetailView):
+    template_name = "users/user-profile.html"
+    model = User

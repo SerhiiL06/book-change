@@ -15,6 +15,8 @@ urlpatterns = [
     path("logout/", LogoutView.as_view(), name="logout"),
     # profile view
     path("profile/", views.ProfileView.as_view(), name="profile"),
+    # profile another user
+    path("user_profile/<int:pk>/", views.UserProfile.as_view(), name="another-user"),
     # email verification
     path(
         "email-verification-sent/",
