@@ -1,5 +1,9 @@
 from typing import Any
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth.forms import (
+    UserCreationForm,
+    AuthenticationForm,
+    UserChangeForm,
+)
 from django import forms
 from .models import User
 
@@ -26,3 +30,15 @@ class LoginForm(AuthenticationForm):
     class Meta:
         model = User
         fields = ["email", "password"]
+
+
+class ProfileForm(UserChangeForm):
+    email = forms.EmailField(widget=forms.EmailInput(attrs={"readonly": True}))
+    first_name = forms.CharField()
+    last_name = forms.CharField()
+    image = forms.ImageField(widget=forms.FileInput(), required=False)
+    about = forms.CharField(widget=forms.Textarea(attrs={"size": 15}))
+
+    class Meta:
+        model = User
+        fields = ["email", "first_name", "last_name", "image", "about"]

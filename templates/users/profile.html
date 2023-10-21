@@ -1,8 +1,6 @@
 {% extends "base.html" %}
 
-
 {% load crispy_forms_tags %}
-
 
 {% block content %}
 
@@ -18,7 +16,7 @@
             <hr>
             <br>
 
-    <form method="POST" autocomplete="off">
+    <form method="POST" action="{% url "users:profile" %}" enctype="multipath/form-data" autocomplete="off">
 
                 {% csrf_token %}
 
@@ -29,17 +27,30 @@
                 <br> <br>
 
 
-                {{form.password1|as_crispy_field}}
+                {{form.first_name|as_crispy_field}}
 
                 <br> <br>
 
 
-                {{form.password2|as_crispy_field}}
+                {{form.last_name|as_crispy_field}}
 
 
                 <br> <br>
+
+                {{form.about|as_crispy_field}}
+
+
+                <br> <br>
+
+
+                {{form.image|as_crispy_field}}
+
+
+                <br> <br>
+
+
                 
-                <button type="submit" class="btn btn-primary navbar-btn text-white w-100 p-2"> &nbsp; Create account </button>
+                <button type="submit" class="btn btn-primary navbar-btn text-white w-100 p-2"> &nbsp; Update profile </button>
 
                 <br> <br>
 
@@ -62,6 +73,7 @@
     </body>
 
     <br> <br>
+
 
 
 {% endblock content %}
