@@ -4,4 +4,7 @@ from . import views
 app_name = "books"
 
 
-urlpatterns = [path("", views.index, name="index")]
+urlpatterns = [
+    path("", views.IndexView.as_view(), name="index"),
+    path("search/", views.SearchView.as_view(), name="search"),
+]

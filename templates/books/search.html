@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container">
+    <div class="row clearfix">
+        {% if object_list %}
+      {% for object  in object_list %}
+        <div class="col-lg-3 col-md-4 col-sm-12">
+            <div class="card product_item">
+                <div class="body">
+                    <div class="cp_img">
+                        <img src="{{object.image.url}}" alt="Product" class="img-fluid">
+                    </div>
+                    <div class="product_details">
+                        <h5><a href="ec-product-detail.html">{{object.title}}k</a></h5>
+                        <ul class="product_price list-unstyled">
+                          <a href="{% url "users:another-user" object.owner.id %}">
+                            <li class="old_price">{{object.owner}}</li>
+                          </a>
+                            
+                           
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}  
+        
+        {% else %}
+
+        0 results for {{result}}
+    </div>{% endif %}
+</div>
+{% endblock content %}
