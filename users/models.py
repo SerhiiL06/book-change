@@ -50,6 +50,11 @@ class User(PermissionsMixin, AbstractBaseUser):
 
     objects = CustomUserManager()
 
+    def save(self, *args, **kwargs):
+        if not self.image:
+            self.image = "user_img/default_img.jpg"
+        super(User, self).save(*args, **kwargs)
+
     def full_name(self):
         return f"{self.first_name} {self.last_name}"
 

@@ -1,6 +1,8 @@
 from typing import Any
 from django.shortcuts import redirect, HttpResponseRedirect
 from django.views.generic import CreateView, UpdateView, DetailView, TemplateView
+from django.http import HttpResponseForbidden
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView
 from django.contrib.auth import login, authenticate
 from django_email_verification import send_email
@@ -83,9 +85,12 @@ class UserProfile(DetailView):
         return context
 
 
+@login_required(redirect_field_name="users:login")
 def follow(request, user_id):
     follower = User.objects.get(id=request.user.id)
     follow_to = User.objects.get(id=user_id)
+    if follow == follow_to:
+        return HttpResponseForbidden("Invalid")
     obj = UserFollowing.objects.filter(user_id=follow_to, followers_id=follower)
     if obj.first():
         obj.delete()

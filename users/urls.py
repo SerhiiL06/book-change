@@ -1,5 +1,6 @@
 from django.urls import path
 from django.contrib.auth.views import LogoutView
+from django.contrib.auth.decorators import login_required
 
 from django.shortcuts import render
 from . import views
@@ -13,12 +14,16 @@ urlpatterns = [
     # login view
     path("login/", views.UserLoginView.as_view(), name="login"),
     # logout view
-    path("logout/", LogoutView.as_view(), name="logout"),
+    path("logout/", login_required(LogoutView.as_view()), name="logout"),
     # profile view
-    path("profile/", views.ProfileView.as_view(), name="profile"),
-    path("options/", views.UserOptions.as_view(), name="options"),
+    path("profile/", login_required(views.ProfileView.as_view()), name="profile"),
+    path("options/", login_required(views.UserOptions.as_view()), name="options"),
     # profile another user
-    path("user_profile/<int:pk>/", views.UserProfile.as_view(), name="another-user"),
+    path(
+        "user_profile/<int:pk>/",
+        login_required(views.UserProfile.as_view()),
+        name="another-user",
+    ),
     # email verification
     path(
         "email-verification-sent/",
@@ -26,5 +31,5 @@ urlpatterns = [
         name="email-verification-sent",
     ),
     # followers
-    path("follow-to/<int:user_id>/", views.follow, name="follow"),
+    path("follow-to/<int:user_id>/", login_required(views.follow), name="follow"),
 ]

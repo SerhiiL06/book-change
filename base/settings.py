@@ -19,6 +19,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    # default apps
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -27,12 +28,16 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     # email verification
     "django_email_verification",
+    # restframework
+    "rest_framework",
+    "django_filters",
     # crispy
     "crispy_forms",
     "crispy_bootstrap5",
     # my_apps
     "books",
     "users",
+    "api",
 ]
 
 MIDDLEWARE = [
@@ -139,6 +144,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # Users
 
 AUTH_USER_MODEL = "users.User"
+LOGIN_URL = "users:login"
 
 LOGIN_REDIRECT_URL = "books:index"
 
@@ -173,3 +179,11 @@ EMAIL_PORT = 587
 EMAIL_HOST_USER = "sergiy06061997@gmail.com"
 EMAIL_HOST_PASSWORD = "mwkz ypvg oviq occk"  # os.environ['password_key'] suggested
 EMAIL_USE_TLS = True
+
+
+# rest framework
+REST_FRAMEWORK = {
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly"
+    ]
+}

@@ -17,13 +17,16 @@
                       <h4>{{profile.first_name}}</h4>
                       <p class="text-secondary mb-1">Full Stack Developer</p>
                       <p class="text-muted font-size-sm">Bay Area, San Francisco, CA</p>
+                      {% if profile.id != user.id %}
                       {% if has_follow %}
                       <a href="{% url "users:follow" profile.id%}"><button class="btn btn-primary">Unfollow</button></a>
                       {% else %}
                        <a href="{% url "users:follow" profile.id%}"><button class="btn btn-success">Follow</button> </a>
                       {% endif %}
                       <button class="btn btn-outline-primary">Message</button>
+                       {% endif %}
                     </div>
+                   
                   </div>
                 </div>
               </div>
