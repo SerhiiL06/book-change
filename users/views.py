@@ -1,11 +1,10 @@
 from typing import Any
-from django.db import models
-from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect, HttpResponseRedirect
-from django.views.generic import CreateView, UpdateView, DetailView
+from django.views.generic import CreateView, UpdateView, DetailView, TemplateView
 from django.contrib.auth.views import LoginView
 from django.contrib.auth import login, authenticate
 from django_email_verification import send_email
+from .models import UserFollowing
 from django.urls import reverse_lazy
 
 from .forms import RegisterForm, LoginForm, ProfileForm
@@ -71,3 +70,29 @@ class ProfileView(UpdateView):
 class UserProfile(DetailView):
     template_name = "users/user-profile.html"
     model = User
+    context_object_name = "profile"
+
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        users = self.request.user == self.get_object()
+        context["check_user"] = users
+        context["has_follow"] = UserFollowing.objects.filter(
+            followers_id=self.request.user, user_id=self.get_object()
+        ).exists()
+        print(context["has_follow"])
+        return context
+
+
+def follow(request, user_id):
+    follower = User.objects.get(id=request.user.id)
+    follow_to = User.objects.get(id=user_id)
+    obj = UserFollowing.objects.filter(user_id=follow_to, followers_id=follower)
+    if obj.first():
+        obj.delete()
+    else:
+        UserFollowing.objects.create(user_id=follow_to, followers_id=follower)
+    return HttpResponseRedirect(request.META["HTTP_REFERER"])
+
+
+class UserOptions(TemplateView):
+    template_name = "users/user-options.html"

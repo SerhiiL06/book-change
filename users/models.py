@@ -55,3 +55,17 @@ class User(PermissionsMixin, AbstractBaseUser):
 
     def __str__(self) -> str:
         return self.full_name()
+
+
+class UserFollowing(models.Model):
+    user_id = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="followers"
+    )
+    followers_id = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="following"
+    )
+
+    def has_follow(user, request):
+        return UserFollowing.objects.filter(
+            user_id=user, followers_id=request.user
+        ).first()

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import User
+from .models import User, UserFollowing
 
 
 # @admin.action(description="Set active status")
@@ -26,3 +26,8 @@ class UserAdmin(admin.ModelAdmin):
     def set_unactive(self, request, queryset):
         updated = queryset.update(is_active=False)
         self.message_user(request, f"You're update {queryset.count()} user")
+
+
+@admin.register(UserFollowing)
+class FollowingAdmin(admin.ModelAdmin):
+    pass

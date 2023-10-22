@@ -1,5 +1,6 @@
 from django.urls import path
 from django.contrib.auth.views import LogoutView
+
 from django.shortcuts import render
 from . import views
 
@@ -15,6 +16,7 @@ urlpatterns = [
     path("logout/", LogoutView.as_view(), name="logout"),
     # profile view
     path("profile/", views.ProfileView.as_view(), name="profile"),
+    path("options/", views.UserOptions.as_view(), name="options"),
     # profile another user
     path("user_profile/<int:pk>/", views.UserProfile.as_view(), name="another-user"),
     # email verification
@@ -23,4 +25,6 @@ urlpatterns = [
         lambda request: render(request, "users/register/email-verification-sent.html"),
         name="email-verification-sent",
     ),
+    # followers
+    path("follow-to/<int:user_id>/", views.follow, name="follow"),
 ]

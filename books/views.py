@@ -19,7 +19,7 @@ class SearchView(View):
 
         books = Book.objects.filter(
             Q(title__icontains=value)
-            | Q(owner__first_name=value)
+            | Q(genre__title__icontains=value)
             | Q(author__name=value)
         )
         if len(value) < 3:

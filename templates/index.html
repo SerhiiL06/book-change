@@ -62,9 +62,10 @@
                     </div>
                     <div class="product_details">
                         <h5><a href="ec-product-detail.html">{{object.title}}k</a></h5>
-                        <ul class="product_price list-unstyled">
+                        <h6>Genre: {{object.genre}}</h6>
+                        <ul class="product_price list-unstyled">Owner:
                           <a href="{% url "users:another-user" object.owner.id %}">
-                            <li class="old_price">{{object.owner}}</li>
+                            <li class="old_price"> {{object.owner}}</li>
                           </a>
                             
                            
