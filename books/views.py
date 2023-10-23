@@ -1,7 +1,6 @@
 from django.db.models import Q
 from django.shortcuts import render
-from .forms import SearchForm
-from django.views.generic import ListView, View
+from django.views.generic import ListView, View, DetailView
 from .models import Book
 
 
@@ -27,3 +26,17 @@ class SearchView(View):
         return render(
             request, "books/search.html", {"object_list": books, "result": value}
         )
+
+
+class DetailBookView(DetailView):
+    template_name = "books/book-detail.html"
+    model = Book
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["last_books"] = (
+            Book.objects.all()
+            .order_by("-created_at")
+            .values("slug", "title", "owner__first_name", "owner__id", "created_at")
+        )
+        return context

@@ -19,6 +19,9 @@ class UserViewSet(viewsets.ModelViewSet):
     ordering_fields = "__all__"
     search_fields = ["email"]
 
+    def get_object(self):
+        return super().get_object()
+
 
 class GenreViewSet(viewsets.ModelViewSet):
     queryset = Genre.objects.all()

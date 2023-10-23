@@ -21,7 +21,7 @@ urlpatterns = [
     # profile another user
     path(
         "user_profile/<int:pk>/",
-        login_required(views.UserProfileView.as_view()),
+        login_required(views.GeneralProfileView.as_view()),
         name="another-user",
     ),
     # email verification

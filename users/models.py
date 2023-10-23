@@ -65,11 +65,15 @@ class User(PermissionsMixin, AbstractBaseUser):
 
 
 class UserProfile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="profile")
     phone_number = PhoneNumberField(region="UA", blank=True, null=True)
     country = CountryField(default="UA")
     social_link = models.URLField(default="")
     profession = models.CharField()
+
+    def get_clean_link(self):
+        clean_link = str(self.social_link).removeprefix("https://").removesuffix(".com")
+        return clean_link
 
 
 class UserFollowing(models.Model):

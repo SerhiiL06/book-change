@@ -78,12 +78,8 @@ class ProfileView(UpdateView):
 
         return HttpResponseRedirect(request.META["HTTP_REFERER"])
 
-    # def form_valid(self, form):
-    #     form.instance.user = self.request.user
-    #     return super().form_valid(form)
 
-
-class UserProfileView(DetailView):
+class GeneralProfileView(DetailView):
     template_name = "users/user-profile.html"
     model = User
     context_object_name = "profile"
