@@ -38,6 +38,9 @@ INSTALLED_APPS = [
     "books",
     "users",
     "api",
+    # other
+    "phonenumber_field",
+    "django_countries",
 ]
 
 MIDDLEWARE = [

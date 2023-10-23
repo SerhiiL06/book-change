@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import User, UserFollowing
+from .models import User, UserFollowing, UserProfile
 
 
 # @admin.action(description="Set active status")
@@ -30,4 +30,9 @@ class UserAdmin(admin.ModelAdmin):
 
 @admin.register(UserFollowing)
 class FollowingAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(UserProfile)
+class UserProfileAdmin(admin.ModelAdmin):
     pass

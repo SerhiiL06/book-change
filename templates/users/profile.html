@@ -9,9 +9,9 @@
 
         <div class="container bg-white shadow-md p-5 form-layout">
 
-            <h3> Create your account </h3>
+            <h3> Update your account, {{user.first_name}} </h3>
 
-            <h5> Purchase your favourite items today! </h5>
+           
 
             <hr>
             <br>
@@ -24,29 +24,32 @@
 
                 {{form.email|as_crispy_field}}
 
-                <br> <br>
 
 
                 {{form.first_name|as_crispy_field}}
 
-                <br> <br>
-
+              
 
                 {{form.last_name|as_crispy_field}}
 
 
-                <br> <br>
 
                 
                 {{form.image|as_crispy_field}}
 
-                <br> <br>
+            
 
                 {{form.about|as_crispy_field}}
                 
 
 
                 <br> <br>
+
+
+                {{profile_form.phone_number|as_crispy_field}}
+                {{profile_form.country|as_crispy_field}}
+                {{profile_form.profession|as_crispy_field}}
+                {{profile_form.social_link|as_crispy_field}}
 
 
                 

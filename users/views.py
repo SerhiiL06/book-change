@@ -1,15 +1,15 @@
 from typing import Any
-from django.shortcuts import redirect, HttpResponseRedirect
+from django.shortcuts import redirect, HttpResponseRedirect, render
 from django.views.generic import CreateView, UpdateView, DetailView, TemplateView
 from django.http import HttpResponseForbidden
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView
 from django.contrib.auth import login, authenticate
 from django_email_verification import send_email
-from .models import UserFollowing
+from .models import UserFollowing, UserProfile
 from django.urls import reverse_lazy
 
-from .forms import RegisterForm, LoginForm, ProfileForm
+from .forms import RegisterForm, LoginForm, ProfileForm, OptionalUserInformationForm
 from .models import User
 
 
@@ -54,22 +54,36 @@ class UserLoginView(LoginView):
 class ProfileView(UpdateView):
     template_name = "users/profile.html"
     model = User
-    form_class = ProfileForm
+    form_class = OptionalUserInformationForm
     success_url = reverse_lazy("users:profile")
 
     def get_object(self, queryset=None):
         return self.request.user
 
-    def post(self, request, *args, **kwargs):
-        form = ProfileForm(request.POST, request.FILES, instance=request.user)
+    def get(self, request, *args, **kwargs):
+        profile, create = UserProfile.objects.get_or_create(user=request.user)
+        form = ProfileForm(instance=request.user)
+        profile_form = OptionalUserInformationForm(instance=profile)
+        context = {"form": form, "profile_form": profile_form}
+        return render(request, "users/profile.html", context)
 
-        if form.is_valid():
+    def post(self, request, *args, **kwargs):
+        profile, create = UserProfile.objects.get_or_create(user=request.user)
+        form = ProfileForm(request.POST, request.FILES, instance=request.user)
+        profile_form = OptionalUserInformationForm(request.POST, instance=profile)
+
+        if profile_form.is_valid() and form.is_valid():
+            profile_form.save()
             form.save()
 
         return HttpResponseRedirect(request.META["HTTP_REFERER"])
 
+    # def form_valid(self, form):
+    #     form.instance.user = self.request.user
+    #     return super().form_valid(form)
 
-class UserProfile(DetailView):
+
+class UserProfileView(DetailView):
     template_name = "users/user-profile.html"
     model = User
     context_object_name = "profile"

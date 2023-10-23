@@ -1,11 +1,9 @@
 from typing import Any
-from django.contrib.auth.forms import (
-    UserCreationForm,
-    AuthenticationForm,
-    UserChangeForm,
-)
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django import forms
-from .models import User
+from .models import User, UserProfile
+from phonenumber_field.formfields import PhoneNumberField
+from django_countries.fields import CountryField
 
 
 class RegisterForm(UserCreationForm):
@@ -42,3 +40,12 @@ class ProfileForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ["email", "first_name", "last_name", "image", "about"]
+
+
+class OptionalUserInformationForm(forms.ModelForm):
+    country = CountryField(blank_label="{select country}")
+    phone_number = PhoneNumberField(region="UA", required=False)
+
+    class Meta:
+        model = UserProfile
+        fields = ["phone_number", "country", "social_link", "profession", "social_link"]

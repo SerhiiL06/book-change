@@ -4,6 +4,8 @@ from django.contrib.auth.models import (
     BaseUserManager,
     AbstractBaseUser,
 )
+from phonenumber_field.modelfields import PhoneNumberField
+from django_countries.fields import CountryField
 
 
 class CustomUserManager(BaseUserManager):
@@ -60,6 +62,14 @@ class User(PermissionsMixin, AbstractBaseUser):
 
     def __str__(self) -> str:
         return self.full_name()
+
+
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    phone_number = PhoneNumberField(region="UA", blank=True, null=True)
+    country = CountryField(default="UA")
+    social_link = models.URLField(default="")
+    profession = models.CharField()
 
 
 class UserFollowing(models.Model):
