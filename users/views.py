@@ -82,7 +82,7 @@ class ProfileView(UpdateView):
 class GeneralProfileView(DetailView):
     template_name = "users/user-profile.html"
     model = User
-    context_object_name = "profile"
+    context_object_name = "object"
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
@@ -91,7 +91,6 @@ class GeneralProfileView(DetailView):
         context["has_follow"] = UserFollowing.objects.filter(
             followers_id=self.request.user, user_id=self.get_object()
         ).exists()
-        print(context["has_follow"])
         return context
 
 

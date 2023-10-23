@@ -56,7 +56,15 @@
                     <div class="cp_img">
                         <img src="{{object.image.url}}" alt="Product" class="img-fluid">
                         <div class="hover">
-                            <a href="javascript:void(0);" class="btn btn-primary btn-sm waves-effect"><i class="zmdi zmdi-plus"></i></a>
+                            <a href="{% url "book_relations:add-to-bookmark" object.slug%}" class="btn btn-primary btn-sm waves-effect">
+                                {% if check_bookmark %}
+                                <i class="zmdi zmdi-minus"></i>
+                                {% else %}
+                                <i class="zmdi zmdi-plus"></i>
+                                {% endif %}
+                                
+                            </a>
+                            
                             
                         </div>
                     </div>

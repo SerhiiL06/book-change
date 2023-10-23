@@ -11,6 +11,7 @@ urlpatterns = [
     path("email/", include(email_urls)),
     path("", include("books.urls")),
     path("users/", include("users.urls")),
+    path("", include("book_relations.urls")),
 ]
 
 

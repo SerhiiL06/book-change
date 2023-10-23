@@ -1,12 +1,21 @@
+from typing import Any
 from django.db.models import Q
 from django.shortcuts import render
 from django.views.generic import ListView, View, DetailView
+from book_relations.logic import check_bookmark
 from .models import Book
 
 
 class IndexView(ListView):
     template_name = "index.html"
     model = Book
+
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        context["check_bookmark"] = check_bookmark(
+            user=self.request.user, books=self.get_queryset()
+        )
+        return context
 
 
 class SearchView(View):
