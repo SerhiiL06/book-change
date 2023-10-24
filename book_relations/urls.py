@@ -9,4 +9,5 @@ urlpatterns = [
         views.add_to_bookmark,
         name="add-to-bookmark",
     ),
+    path("rait/", views.left_rating, name="rating"),
 ]

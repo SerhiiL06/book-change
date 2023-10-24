@@ -1,4 +1,5 @@
 from django.db import models
+
 from users.models import User
 from django.core.validators import MaxValueValidator, FileExtensionValidator
 from django.utils.text import slugify
@@ -28,7 +29,9 @@ class Book(models.Model):
     title = models.CharField(max_length=250)
     slug = models.SlugField(default="")
     description = models.TextField(blank=True, null=True)
-    rating = models.SmallIntegerField(validators=[MaxValueValidator(5)])
+    rating = models.DecimalField(
+        validators=[MaxValueValidator(5)], max_digits=3, decimal_places=2
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     last_update = models.DateTimeField(auto_now=True)
     image = models.ImageField(

@@ -18,6 +18,27 @@
                         <div class="article-img">
                             <img src="{{object.image.url}}" title="" alt="">
                         </div>
+
+                            {% if user.is_authenticated %}
+                            <label for="select">Rating</label> 
+                            <form method='POST'>
+                                {% csrf_token %}
+                            <select name="select" id="select">
+                                        <option value="1">1</option>
+              
+                                        <option value="2">2</option>
+              
+                                        <option value="3">3</option>
+              
+                                        <option value="4">4</option>
+
+                                        <option value="5">5</option></select>
+                                        <a href="{% url "book_relations:rating" %}"> 
+                                            <button type="button" value="{{object.id}}" id="add-rait">rait</button>
+                                        </a>
+                                        
+                       </form>
+                       {% endif %}
                         <div class="article-title">
                             <h6><a href="#">{{object.genre.title}}</a></h6>
                             <h2>{{object.title}}</h2>
@@ -25,22 +46,18 @@
                                 <div class="avatar">
                                     <img src="{{object.owner.image.url}}" title="" alt="">
                                 </div>
+                                
+                                    
+                               
                                 <div class="media-body">
-                                    <label>{{object.owner.full_name}}</label>
+                                    <a href="{% url "users:another-user" object.owner.id%}"><label>{{object.owner.full_name}}</label></a>
+                                    <span>Rating book: {{avg}}</span>
                                     <span>{{object.created_at}}</span>
                                 </div>
                             </div>
-                        </div>
+                        </div>     
                         <div class="article-content">
-                            <p>Aenean eleifend ante maecenas pulvinar montes lorem et pede dis dolor pretium donec dictum. Vici consequat justo enim. Venenatis eget adipiscing luctus lorem. Adipiscing veni amet luctus enim sem libero tellus viverra venenatis aliquam. Commodo natoque quam pulvinar elit.</p>
-                            <p>Eget aenean tellus venenatis. Donec odio tempus. Felis arcu pretium metus nullam quam aenean sociis quis sem neque vici libero. Venenatis nullam fringilla pretium magnis aliquam nunc vulputate integer augue ultricies cras. Eget viverra feugiat cras ut. Sit natoque montes tempus ligula eget vitae pede rhoncus maecenas consectetuer commodo condimentum aenean.</p>
-                            <h4>What are my payment options?</h4>
-                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-                            <blockquote>
-                                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.</p>
-                                <p class="blockquote-footer">Someone famous in <cite title="Source Title">Dick Grayson</cite></p>
-                            </blockquote>
-                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                           <p>{{object.description}}</p>
                         </div>
                         <div class="nav tag-cloud">
                             <a href="#">Design</a>
@@ -123,11 +140,7 @@
                                         </a>
                                     </div>
                                 </div>
-                                <div class="lpa-right">
-                                    <a href="#">
-                                        <img src="https://www.bootdey.com/image/400x200/FFB6C1/000000" title="" alt="">
-                                    </a>
-                                </div>
+                               
                             </div>
                            {% endfor %} 
                             
@@ -156,5 +169,35 @@
             </div>
         </div>
     </div>
+
+
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $("#add-rait").on("click", function () {
+            var selectedRating = $("#select").val();
+            $.ajax({
+                url: "{% url 'book_relations:rating' %}",
+                type: "POST",
+                data: {
+                    rating: selectedRating,
+                    book_id: $(this).val(),  // Ви можете взяти значення з атрибуту "value" кнопки
+                    csrfmiddlewaretoken: '{{ csrf_token }}',
+                },
+                success: function (data) {
+                    // Обробка успішної відповіді від сервера
+                },
+                error: function () {
+                    // Обробка помилки
+                },
+            });
+        });
+    });
+</script>
+
+
+
 
 {% endblock content %}

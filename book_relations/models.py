@@ -1,13 +1,22 @@
 from django.db import models
-from django.db.models.query import QuerySet
 from users.models import User
+from numpy import mean
 from books.models import Book
 
 
 class BookRelationsManager(models.Manager):
     def get_queryset(self):
         queryset = super().get_queryset()
+        queryset.annotate()
         return queryset.filter(models.Q(bookmark=True) | models.Q(rating__gt=0))
+
+    def get_rating(self, book):
+        rating = (
+            self.get_queryset()
+            .filter(book=book)
+            .aggregate(avg_rating=models.Avg("rating"))["avg_rating"]
+        )
+        return rating
 
 
 class BookRelations(models.Model):
@@ -19,8 +28,10 @@ class BookRelations(models.Model):
         (5, 5),
     )
 
-    book = models.ForeignKey(Book, on_delete=models.CASCADE)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    book = models.ForeignKey(
+        Book, on_delete=models.CASCADE, related_name="book_relation"
+    )
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user_rait")
 
     bookmark = models.BooleanField(default=False)
     rating = models.SmallIntegerField(choices=RATING_CHOISES, blank=True, null=True)
