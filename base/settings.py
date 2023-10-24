@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     "books",
     "users",
     "api",
+    "book_relations",
     # other
     "phonenumber_field",
     "django_countries",
@@ -123,6 +124,8 @@ LANGUAGE_CODE = "en-us"
 TIME_ZONE = "UTC"
 
 USE_I18N = True
+
+USE_L10N = True
 
 USE_TZ = True
 

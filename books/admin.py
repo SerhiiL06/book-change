@@ -14,5 +14,5 @@ class AuthorAdmin(admin.ModelAdmin):
 
 @admin.register(Book)
 class BookAdmin(admin.ModelAdmin):
-    list_display = ["title", "genre"]
+    list_display = ["title", "genre", "image"]
     prepopulated_fields = {"slug": ["title"]}
