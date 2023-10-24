@@ -8,7 +8,7 @@
 <div class="container">
     <div class="main-body">
     
-       
+     
     
           <div class="row gutters-sm">
             <div class="col-md-4 mb-3">
@@ -22,7 +22,7 @@
                       <i class="{{ object.profile.country.flag_css }}"></i>
                       <p class="text-secondary mb-1">{{user.profile.profession}}</p>
                       <p class="text-muted font-size-sm">{{object.profile.country.name}}, {{object.profile.country}}</p>
-                      {% if profile.id != user.id %}
+                      {% if object.id != user.id %}
                       {% if has_follow %}
                       <a href="{% url "users:follow" object.id%}"><button class="btn btn-primary">Unfollow</button></a>
                       {% else %}
@@ -113,7 +113,7 @@
                       <h6 class="mb-0"> Activities </h6>
                     </div>
                     <div class="col-sm-9 text-secondary">
-                      Raiting 0 | Books 0
+                      Raiting 0 | Books {{object.my_books.count}}
                     </div>
                   </div>
                   <hr>

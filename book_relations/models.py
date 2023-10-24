@@ -16,7 +16,7 @@ class BookRelationsManager(models.Manager):
             .filter(book=book)
             .aggregate(avg_rating=models.Avg("rating"))["avg_rating"]
         )
-        return rating
+        return rating if rating else 0
 
 
 class BookRelations(models.Model):

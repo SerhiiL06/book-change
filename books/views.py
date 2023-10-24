@@ -10,6 +10,7 @@ from .models import Book
 class IndexView(ListView):
     template_name = "index.html"
     model = Book
+    paginate_by = 8
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -43,12 +44,14 @@ class DetailBookView(DetailView):
     model = Book
 
     def get_context_data(self, **kwargs):
+        obj = self.get_object()
         context = super().get_context_data(**kwargs)
-        context["avg"] = BookRelations.objects.get_rating(book=self.get_object())
+        context["avg"] = BookRelations.objects.get_rating(book=obj)
+        context["recommended"] = Book.objects.get_recommended(genre=obj.genre)
         context["last_books"] = (
             Book.objects.all()
             .order_by("-created_at")
             .values("slug", "title", "owner__first_name", "owner__id", "created_at")
-        )
+        )[:3]
 
         return context
