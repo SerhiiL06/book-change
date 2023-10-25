@@ -1,5 +1,6 @@
 from typing import Any
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth import authenticate
 from django import forms
 from .models import User, UserProfile
 from phonenumber_field.formfields import PhoneNumberField

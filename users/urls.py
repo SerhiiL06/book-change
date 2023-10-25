@@ -16,8 +16,8 @@ urlpatterns = [
     # logout view
     path("logout/", login_required(LogoutView.as_view()), name="logout"),
     # profile view
-    path("profile/", login_required(views.ProfileView.as_view()), name="profile"),
-    path("options/", login_required(views.UserOptions.as_view()), name="options"),
+    path("profile/", login_required(views.UserUpdateView.as_view()), name="profile"),
+    path("options/", login_required(views.UserOptionsView.as_view()), name="options"),
     # profile another user
     path(
         "user_profile/<int:pk>/",
@@ -32,4 +32,6 @@ urlpatterns = [
     ),
     # followers
     path("follow-to/<int:user_id>/", login_required(views.follow), name="follow"),
+    path("user-list/", views.FollowersListView.as_view(), name="followers"),
+    path("folloging-list/", views.MyFollowingView.as_view(), name="my-following"),
 ]

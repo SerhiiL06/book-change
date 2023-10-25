@@ -28,7 +28,7 @@ class Author(models.Model):
 
 class BookManager(models.Manager):
     def get_recommended(self, genre):
-        recommend_books = list(Book.objects.filter(genre=genre))
+        recommend_books = list(Book.objects.filter(genre=genre).select_related("owner"))
         if len(recommend_books) < 3:
             recommend_books += list(self.get_queryset())[:4]
         return random.sample(recommend_books, 3)
@@ -64,30 +64,3 @@ class Book(models.Model):
 
     class Meta:
         ordering = ["-created_at"]
-
-
-# class BookRelations(models.Model):
-#     RAITING = (
-#         (1, 1),
-#         (2, 2),
-#         (3, 3),
-#         (4, 4),
-#         (5, 5),
-#     )
-
-#     book = models.ForeignKey(to=Book, on_delete=models.CASCADE, related_name="relation")
-#     raiting = models.SmallIntegerField(choices=RAITING)
-#     in_request = models.BooleanField(default=False)
-#     client = models.ForeignKey(
-#         to=User, on_delete=models.CASCADE, related_name="active_book"
-#     )
-
-
-# class RequestBook(models.Model):
-
-
-#     book = models.ForeignKey(to=Book, on_delete=models.CASCADE)
-#     customer = models.ForeignKey(
-#         to=User, on_delete=models.CASCADE, related_name="requests"
-#     )
-#     status = models.CharField()

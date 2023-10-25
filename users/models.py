@@ -9,6 +9,8 @@ from django_countries.fields import CountryField
 
 
 class CustomUserManager(BaseUserManager):
+    """User manager with email and without username"""
+
     def _create_user(self, email, password, **extra_fields):
         if not email:
             raise ValueError("Enter your email address")
@@ -31,6 +33,8 @@ class CustomUserManager(BaseUserManager):
 
 
 class User(PermissionsMixin, AbstractBaseUser):
+    """User model"""
+
     email = models.EmailField(unique=True, max_length=50)
     first_name = models.CharField(max_length=50, null=True, blank=True)
     last_name = models.CharField(max_length=50, null=True, blank=True)
@@ -77,14 +81,12 @@ class UserProfile(models.Model):
 
 
 class UserFollowing(models.Model):
+    """Користувач на якого підписалися"""
+
     user_id = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name="followers"
     )
+    """користувач який пидписався"""
     followers_id = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name="following"
     )
-
-    def has_follow(user, request):
-        return UserFollowing.objects.filter(
-            user_id=user, followers_id=request.user
-        ).first()

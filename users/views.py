@@ -1,6 +1,14 @@
 from typing import Any
+from django.db.models.query import QuerySet
+from .decorators import is_object_owner, is_following
 from django.shortcuts import redirect, HttpResponseRedirect, render
-from django.views.generic import CreateView, UpdateView, DetailView, TemplateView
+from django.views.generic import (
+    CreateView,
+    UpdateView,
+    DetailView,
+    TemplateView,
+    ListView,
+)
 from django.http import HttpResponseForbidden
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView
@@ -14,6 +22,8 @@ from .models import User
 
 
 class RegisterView(CreateView):
+    """Registration form"""
+
     template_name = "users/register/register.html"
     model = User
     form_class = RegisterForm
@@ -26,8 +36,7 @@ class RegisterView(CreateView):
             user = form.save()
             send_email(user)
             return redirect("users:email-verification-sent")
-        else:
-            return HttpResponseRedirect("users:register")
+        return HttpResponseRedirect("users:register")
 
 
 class UserLoginView(LoginView):
@@ -51,7 +60,7 @@ class UserLoginView(LoginView):
         return HttpResponseRedirect(request.META["HTTP_REFERER"])
 
 
-class ProfileView(UpdateView):
+class UserUpdateView(UpdateView):
     template_name = "users/profile.html"
     model = User
     form_class = OptionalUserInformationForm
@@ -84,29 +93,47 @@ class GeneralProfileView(DetailView):
     model = User
     context_object_name = "object"
 
-    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+    def get_object(self, queryset=None):
+        q = User.objects.all().select_related("profile")
+        return super().get_object(queryset=q)
+
+    def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        users = self.request.user == self.get_object()
-        context["check_user"] = users
-        context["has_follow"] = UserFollowing.objects.filter(
-            followers_id=self.request.user, user_id=self.get_object()
-        ).exists()
+        context["check_user"] = is_object_owner(self.request.user, self.get_object())
+        context["has_follow"] = is_following(self.request.user, self.get_object())
         return context
 
 
 @login_required(redirect_field_name="users:login")
 def follow(request, user_id):
-    follower = User.objects.get(id=request.user.id)
-    follow_to = User.objects.get(id=user_id)
-    if follow == follow_to:
+    user = User.objects.get(id=user_id)
+    if is_object_owner(request.user.id, user_id):
         return HttpResponseForbidden("Invalid")
-    obj = UserFollowing.objects.filter(user_id=follow_to, followers_id=follower)
-    if obj.first():
+    obj, create = UserFollowing.objects.get_or_create(
+        user_id=user, followers_id=request.user
+    )
+    if not create:
         obj.delete()
-    else:
-        UserFollowing.objects.create(user_id=follow_to, followers_id=follower)
     return HttpResponseRedirect(request.META["HTTP_REFERER"])
 
 
-class UserOptions(TemplateView):
+class UserOptionsView(TemplateView):
     template_name = "users/user-options.html"
+
+
+class FollowersListView(ListView):
+    template_name = "users/tables/followers-list.html"
+    model = UserFollowing
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        return queryset.filter(user_id=self.request.user).select_related("user_id")
+
+
+class MyFollowingView(ListView):
+    template_name = "users/tables/following-list.html"
+    model = UserFollowing
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        return queryset.filter(followers_id=self.request.user).select_related("user_id")

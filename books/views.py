@@ -1,5 +1,7 @@
+from typing import Any
 from django.db.models import Q
-
+from django.core.cache import cache
+from django.views.decorators.cache import never_cache
 from django.shortcuts import render
 from django.views.generic import ListView, View, DetailView
 from book_relations.logic import check_bookmark
@@ -11,6 +13,9 @@ class IndexView(ListView):
     template_name = "index.html"
     model = Book
     paginate_by = 8
+
+    def get_queryset(self):
+        return super().get_queryset().select_related("owner").select_related("genre")
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -41,17 +46,26 @@ class SearchView(View):
 
 class DetailBookView(DetailView):
     template_name = "books/book-detail.html"
-    model = Book
+    queryset = Book.objects.all().select_related("genre").select_related("owner")
+    cache_timeout = 60
 
     def get_context_data(self, **kwargs):
         obj = self.get_object()
         context = super().get_context_data(**kwargs)
-        context["avg"] = BookRelations.objects.get_rating(book=obj)
-        context["recommended"] = Book.objects.get_recommended(genre=obj.genre)
-        context["last_books"] = (
-            Book.objects.all()
-            .order_by("-created_at")
-            .values("slug", "title", "owner__first_name", "owner__id", "created_at")
-        )[:3]
+        cache_key = f"book_detail_{obj.id}"
+
+        cached_data = cache.get(cache_key)
+
+        if cached_data is not None:
+            context.update(cached_data)
+        else:
+            # average rating book
+            context["avg"] = BookRelations.objects.get_rating(book=obj)
+            # generate 3 random book
+            context["recommended"] = Book.objects.get_recommended(obj.genre)
+            # last 3 books
+            context["last_books"] = self.get_queryset()[:3]
+
+            cache.set(cache_key, context, self.cache_timeout)
 
         return context

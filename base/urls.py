@@ -12,6 +12,7 @@ urlpatterns = [
     path("", include("books.urls")),
     path("users/", include("users.urls")),
     path("", include("book_relations.urls")),
+    path("__debug__/", include("debug_toolbar.urls")),
 ]
 
 

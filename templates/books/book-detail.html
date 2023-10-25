@@ -1,5 +1,6 @@
 {% include "base.html" %}
 {% load static %}
+{% load cache %}
 
 {% block css %}
     <link rel="stylesheet" href="{% static "css/book-detail.css" %}">
@@ -51,7 +52,9 @@
                                
                                 <div class="media-body">
                                     <a href="{% url "users:another-user" object.owner.id%}"><label>{{object.owner.full_name}}</label></a>
+                                    
                                     <span>Rating book: {{avg}}</span>
+                                
                                     <span>{{object.created_at}}</span>
                                 </div>
                             </div>
@@ -122,6 +125,7 @@
                             <h3>Recommended</h3>
                         </div>
                         <div class="widget-body">
+                       
                             {% for b in recommended %}
                             <div class="latest-post-aside media">
                                 <div class="lpa-left media-body">
@@ -142,6 +146,7 @@
                                
                             </div>
                            {% endfor %} 
+                        
                             
                         </div>
                     </div>
@@ -152,6 +157,7 @@
                             <h3>Latest Books</h3>
                         </div>
                         <div class="widget-body">
+                          
                             {% for book in last_books %}
                             <div class="latest-post-aside media">
                                 <div class="lpa-left media-body">
@@ -161,7 +167,7 @@
                                     </div>
                                     </a>
                                     <div class="lpa-meta">
-                                        <a class="name" href="{% url "users:another-user" book.owner__id%}">
+                                        <a class="name" href="{% url "users:another-user" book.owner_id%}">
                                             {{book.owner__first_name}}
                                         </a>
                                         <a class="date" href="#">
@@ -172,6 +178,7 @@
                                
                             </div>
                            {% endfor %} 
+                        
                             
                         </div>
                     </div>
