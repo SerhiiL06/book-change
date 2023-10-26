@@ -1,4 +1,5 @@
-from rest_framework import viewsets
+from rest_framework import viewsets, permissions
+from rest_framework.authentication import TokenAuthentication
 from users.models import User
 from users.serializers import UserSerializer
 from books.models import Genre, Book
@@ -9,7 +10,9 @@ from rest_framework import filters
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
+    authentication_classes = [TokenAuthentication]
     serializer_class = UserSerializer
+    permission_classes = [permissions.BasePermission]
     filter_backends = [
         filter.DjangoFilterBackend,
         filters.OrderingFilter,

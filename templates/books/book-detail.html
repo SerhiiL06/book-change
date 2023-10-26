@@ -1,6 +1,6 @@
 {% include "base.html" %}
 {% load static %}
-{% load cache %}
+
 
 {% block css %}
     <link rel="stylesheet" href="{% static "css/book-detail.css" %}">
@@ -40,13 +40,13 @@
                                         
                        </form>
                        {% endif %}
-                        <div class="article-title">
+                   <div class="article-title">
                             <h6><a href="#">{{object.genre.title}}</a></h6>
                             <h2>{{object.title}}</h2>
                             <div class="media">
                                 <div class="avatar">
                                     <img src="{{object.owner.image.url}}" title="" alt="">
-                                </div>
+                                </div> 
                                 
                                     
                                
@@ -168,7 +168,7 @@
                                     </a>
                                     <div class="lpa-meta">
                                         <a class="name" href="{% url "users:another-user" book.owner_id%}">
-                                            {{book.owner__first_name}}
+                                            {{book.owner.first_name}}
                                         </a>
                                         <a class="date" href="#">
                                             {{book.created_at}}
@@ -204,8 +204,7 @@
                 </div>
             </div>
         </div>
-    </div>
-
+    </div> 
 
 
 
@@ -231,7 +230,7 @@
             });
         });
     });
-</script>
+</script> 
 
 
 

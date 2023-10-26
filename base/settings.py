@@ -30,6 +30,7 @@ INSTALLED_APPS = [
     "django_email_verification",
     # restframework
     "rest_framework",
+    "rest_framework.authtoken",
     "django_filters",
     # crispy
     "crispy_forms",
@@ -43,7 +44,6 @@ INSTALLED_APPS = [
     "phonenumber_field",
     "django_countries",
     "debug_toolbar",
-    "redis",
 ]
 
 MIDDLEWARE = [
@@ -205,6 +205,15 @@ REST_FRAMEWORK = {
 
 
 # Redis
+SESSION_ENGINE = "django.contrib.sessions.backends.cache"
+SESSION_CACHE_ALIAS = "default"
+
+SESSION_COOKIE_AGE = 12000
+SESSION_SAVE_EVERY_REQUEST = True
+
+REDIS_HOST = "127.0.0.1"
+REDIS_PORT = "6379"
+
 CACHES = {
     "default": {
         "BACKEND": "django.core.cache.backends.redis.RedisCache",

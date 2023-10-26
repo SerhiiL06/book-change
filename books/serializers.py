@@ -17,7 +17,7 @@ class BookSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Book
-        exclude = ["slug", "rating", "last_update", "image", "author"]
+        exclude = ["slug", "rating", "last_update", "author"]
 
     def get_description(self, obj):
         return f"{obj.description[:20]}..."
