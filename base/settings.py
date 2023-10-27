@@ -31,6 +31,7 @@ INSTALLED_APPS = [
     # restframework
     "rest_framework",
     "rest_framework.authtoken",
+    "djoser",
     "django_filters",
     # crispy
     "crispy_forms",
@@ -198,9 +199,14 @@ EMAIL_USE_TLS = True
 
 # rest framework
 REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.TokenAuthentication",
+        "rest_framework.authentication.BasicAuthentication",
+        "rest_framework.authentication.SessionAuthentication",
+    ],
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly"
-    ]
+    ],
 }
 
 

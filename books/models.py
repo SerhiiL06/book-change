@@ -56,6 +56,8 @@ class Book(models.Model):
     objects = BookManager()
 
     def save(self, *args, **kwargs):
+        if not self.rating:
+            self.rating = 0
         self.slug = slugify(self.title)
         return super().save(*args, **kwargs)
 

@@ -6,7 +6,7 @@ from .models import User, UserProfile
 class MyBooksSerializer(serializers.ModelSerializer):
     class Meta:
         model = Book
-        fields = ["title"]
+        fields = ["title", "rating"]
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
@@ -18,13 +18,14 @@ class UserProfileSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     join_at = serializers.SerializerMethodField()
     followers = serializers.SerializerMethodField()
-    my_books = MyBooksSerializer(many=True)
-    profile = UserProfileSerializer(many=False)
+    my_books = MyBooksSerializer(many=True, required=False)
+    profile = UserProfileSerializer(many=False, required=False)
     total_books = serializers.SerializerMethodField()
 
     class Meta:
         model = User
         fields = [
+            "id",
             "first_name",
             "last_name",
             "join_at",
@@ -34,9 +35,6 @@ class UserSerializer(serializers.ModelSerializer):
             "followers",
             "profile",
         ]
-
-    def create(self, validated_data):
-        return super().create(**validated_data)
 
     def get_join_at(self, obj):
         return obj.join_at.date()
