@@ -30,6 +30,12 @@ urlpatterns = [
         lambda request: render(request, "users/register/email-verification-sent.html"),
         name="email-verification-sent",
     ),
+    # send mail to user
+    path(
+        "send-mail/<str:email>/",
+        login_required(views.SendMailView.as_view()),
+        name="send-mail",
+    ),
     # followers
     path("follow-to/<int:user_id>/", login_required(views.follow), name="follow"),
     path("user-list/", views.FollowersListView.as_view(), name="followers"),

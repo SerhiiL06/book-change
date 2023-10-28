@@ -1,11 +1,13 @@
 from rest_framework import viewsets, permissions
 from rest_framework.authentication import TokenAuthentication
+from rest_framework.decorators import api_view
 from users.models import User
 from .permissions import IsOwnerOrStaffOrSuperuser
 from users.serializers import UserSerializer
 from books.models import Genre, Book
 from books.serializers import GenreSerializer, BookSerializer
 from django_filters import rest_framework as filter
+from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework import filters
 
 
@@ -35,6 +37,13 @@ class GenreViewSet(viewsets.ModelViewSet):
 class BookViewSet(viewsets.ModelViewSet):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
-    permission_classes = [permissions.IsAuthenticated]
-    filter_backends = [filter.DjangoFilterBackend]
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsOwnerOrStaffOrSuperuser]
+    filter_backends = [filter.DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_fields = ["id", "genre__title", "owner__first_name", "author"]
+    order_fields = ["title", "rating"]
+    search_fields = ["title", "owner", "author"]
+
+    # def get_serializer_class(self):
+    #     if self.action == "list":
+    #     return super().get_serializer_class()

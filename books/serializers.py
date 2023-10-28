@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from .models import Genre, Author, Book
+from book_relations.models import BookRelations
 
 
 class GenreSerializer(serializers.ModelSerializer):
@@ -10,14 +11,17 @@ class GenreSerializer(serializers.ModelSerializer):
 
 
 class BookSerializer(serializers.ModelSerializer):
-    owner = serializers.SerializerMethodField()
+    title = serializers.CharField()
     description = serializers.SerializerMethodField()
-    created_at = serializers.SerializerMethodField()
+    author = serializers.SerializerMethodField()
     genre = serializers.SerializerMethodField()
+    owner = serializers.SerializerMethodField()
+    created_at = serializers.SerializerMethodField()
+    avg_rating = serializers.SerializerMethodField()
 
     class Meta:
         model = Book
-        exclude = ["slug", "rating", "last_update", "author"]
+        exclude = ["slug", "rating", "last_update"]
 
     def get_description(self, obj):
         return f"{obj.description[:20]}..."
@@ -30,3 +34,10 @@ class BookSerializer(serializers.ModelSerializer):
 
     def get_created_at(self, obj):
         return obj.created_at.date()
+
+    def get_author(self, obj):
+        return obj.author.name
+
+    def get_avg_rating(self, obj):
+        rating = BookRelations.objects.get_rating(obj)
+        return rating

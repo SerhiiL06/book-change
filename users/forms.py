@@ -50,3 +50,16 @@ class OptionalUserInformationForm(forms.ModelForm):
     class Meta:
         model = UserProfile
         fields = ["phone_number", "country", "social_link", "profession", "social_link"]
+
+
+class MessageForm(forms.Form):
+    subject = forms.CharField(widget=forms.TextInput(attrs={"placeholder": "Subject"}))
+    message = forms.CharField(
+        widget=forms.Textarea(attrs={"placeholder": "Your message"})
+    )
+
+    def clean_field(self):
+        subject = self.cleaned_data["subject"]
+        message = self.cleaned_data["message"]
+        data = {"subject": subject, "message": message}
+        return data

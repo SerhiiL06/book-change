@@ -1,5 +1,6 @@
 from typing import Any
 from django.db.models.query import QuerySet
+from django.core.exceptions import PermissionDenied
 from .decorators import is_object_owner, is_following
 from django.shortcuts import redirect, HttpResponseRedirect, render
 from django.views.generic import (
@@ -8,6 +9,7 @@ from django.views.generic import (
     DetailView,
     TemplateView,
     ListView,
+    FormView,
 )
 from django.http import HttpResponseForbidden
 from django.contrib.auth.decorators import login_required
@@ -15,9 +17,16 @@ from django.contrib.auth.views import LoginView
 from django.contrib.auth import login, authenticate
 from django_email_verification import send_email
 from .models import UserFollowing, UserProfile
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
+from django.core.mail import send_mail
 
-from .forms import RegisterForm, LoginForm, ProfileForm, OptionalUserInformationForm
+from .forms import (
+    RegisterForm,
+    LoginForm,
+    ProfileForm,
+    OptionalUserInformationForm,
+    MessageForm,
+)
 from .models import User
 
 
@@ -137,3 +146,32 @@ class MyFollowingView(ListView):
     def get_queryset(self):
         queryset = super().get_queryset()
         return queryset.filter(followers_id=self.request.user).select_related("user_id")
+
+
+class SendMailView(FormView):
+    form_class = MessageForm
+
+    def get(self, request, *args, **kwargs):
+        if self.request.user.email == kwargs["email"]:
+            raise PermissionDenied()
+        form = MessageForm()
+        return render(request, "users/send-mail.html", {"form": form})
+
+    def post(self, request, *args, **kwargs):
+        form = MessageForm(request.POST)
+        if form.is_valid():
+            to_email = kwargs.get("email")
+            message = form.cleaned_data["message"]
+            subject = form.cleaned_data["subject"]
+            send_mail(
+                subject=subject,
+                message=message,
+                from_email=self.request.user.email,
+                recipient_list=[to_email],
+                fail_silently=True,
+            )
+
+            user = User.objects.get(email=to_email)
+
+            return redirect("users:another-user", pk=user.pk)
+        return render(request, "users/send-mail.html", {"form": form})

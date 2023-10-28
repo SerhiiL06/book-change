@@ -28,7 +28,11 @@
                       {% else %}
                        <a href="{% url "users:follow" object.id%}"><button class="btn btn-success">Follow</button> </a>
                       {% endif %}
-                      <button class="btn btn-outline-primary">Message</button>
+                      <a href="{% url "users:send-mail" object.email%}">
+
+                        <button class="btn btn-outline-primary">Message</button>
+                      </a>
+                      
                        {% endif %}
                     </div>
                    

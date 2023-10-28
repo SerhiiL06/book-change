@@ -1,0 +1,62 @@
+{% include "base.html" %}
+
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+
+ <br>
+
+        <div class="container bg-white shadow-md p-5 form-layout">
+            <div class-"text-align: center;">
+<h3> Send email </h3>
+
+
+            </div>
+            
+                 
+               
+
+
+            <hr>
+            <br>
+
+    <form method="POST" autocomplete="off">
+
+                {% csrf_token %}
+
+
+
+                {{form.subject|as_crispy_field}}
+
+                <br> <br>
+
+
+                {{form.message|as_crispy_field}}
+
+                <br> <br>
+
+                
+                <button type="submit" class="btn btn-primary navbar-btn text-white w-100 p-2"> &nbsp; Send</button>
+
+                <br> <br>
+                    
+
+                </div>
+
+
+            </form>
+
+
+            
+
+        </div>
+
+
+
+    </body>
+
+    <br> <br>
+
+{% endblock content %}

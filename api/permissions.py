@@ -19,7 +19,7 @@ class IsOwnerOrStaffOrSuperuser(BasePermission):
         if request.method in SAFE_METHODS:
             return True
 
-        if request.method in UPDATE_METHODS:
+        if request.method in UPDATE_METHODS and request.user == obj.owner:
             return True
 
         return False
