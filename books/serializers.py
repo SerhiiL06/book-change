@@ -10,6 +10,26 @@ class GenreSerializer(serializers.ModelSerializer):
         fields = ["title"]
 
 
+class BookListSerializer(serializers.ModelSerializer):
+    owner = serializers.SerializerMethodField()
+    genre = serializers.SerializerMethodField()
+    avg_rating = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Book
+        fields = ["id", "title", "genre", "owner", "avg_rating"]
+
+    def get_owner(self, obj):
+        return obj.owner.full_name()
+
+    def get_genre(self, obj):
+        return obj.genre.title
+
+    def get_avg_rating(self, obj):
+        rating = BookRelations.objects.get_rating(obj)
+        return rating
+
+
 class BookSerializer(serializers.ModelSerializer):
     title = serializers.CharField()
     description = serializers.SerializerMethodField()

@@ -13,4 +13,5 @@ urlpatterns = [
         views.DetailBookView.as_view(),
         name="detail-book",
     ),
+    path("comment/<slug:slug>/", views.DetailBookView.as_view(), name="add-comment"),
 ]

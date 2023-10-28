@@ -1,6 +1,7 @@
 {% include "base.html" %}
 {% load static %}
 
+{% load crispy_forms_tags %}
 
 {% block css %}
     <link rel="stylesheet" href="{% static "css/book-detail.css" %}">
@@ -74,30 +75,7 @@
                     </article>
                     <div class="contact-form article-comment">
                         <h4>Leave a Reply</h4>
-                        <form id="contact-form" method="POST">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <input name="Name" id="name" placeholder="Name *" class="form-control" type="text">
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <input name="Email" id="email" placeholder="Email *" class="form-control" type="email">
-                                    </div>
-                                </div>
-                                <div class="col-md-12">
-                                    <div class="form-group">
-                                        <textarea name="message" id="message" placeholder="Your message *" rows="4" class="form-control"></textarea>
-                                    </div>
-                                </div>
-                                <div class="col-md-12">
-                                    <div class="send">
-                                        <button class="px-btn theme"><span>Submit</span> <i class="arrow"></i></button>
-                                    </div>
-                                </div>
-                            </div>
-                        </form>
+                        {% include "books/comment.html" %}
                     </div>
                 </div>
                 <div class="col-lg-4 m-15px-tb blog-aside">

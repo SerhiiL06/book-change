@@ -1,11 +1,11 @@
 from rest_framework import viewsets, permissions
 from rest_framework.authentication import TokenAuthentication
-from rest_framework.decorators import api_view
+from rest_framework.response import Response
 from users.models import User
 from .permissions import IsOwnerOrStaffOrSuperuser
 from users.serializers import UserSerializer
 from books.models import Genre, Book
-from books.serializers import GenreSerializer, BookSerializer
+from books.serializers import GenreSerializer, BookSerializer, BookListSerializer
 from django_filters import rest_framework as filter
 from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework import filters
@@ -44,6 +44,7 @@ class BookViewSet(viewsets.ModelViewSet):
     order_fields = ["title", "rating"]
     search_fields = ["title", "owner", "author"]
 
-    # def get_serializer_class(self):
-    #     if self.action == "list":
-    #     return super().get_serializer_class()
+    def get_serializer_class(self):
+        if self.action == "list":
+            return BookListSerializer
+        return self.serializer_class

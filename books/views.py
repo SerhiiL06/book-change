@@ -1,12 +1,12 @@
 from typing import Any
 from django.db.models import Q
 from django.core.cache import cache
-from django.views.decorators.cache import never_cache
+from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.views.generic import ListView, View, DetailView
 from book_relations.logic import check_bookmark
 from book_relations.models import BookRelations
-from .models import Book
+from .models import Book, Comment
 
 
 class IndexView(ListView):
@@ -58,6 +58,13 @@ class DetailBookView(DetailView):
         #     cache.set(cache_key, context, self.cache_timeout)
 
         return context
+
+    def post(self, request, *args, **kwargs):
+        book = Book.objects.get(slug=kwargs["slug"])
+        Comment.objects.create(
+            user=self.request.user, book=book, comment=request.POST["message"]
+        )
+        return HttpResponseRedirect(request.META["HTTP_REFERER"])
 
 
 class SearchView(View):

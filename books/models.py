@@ -38,9 +38,6 @@ class Book(models.Model):
     title = models.CharField(max_length=250)
     slug = models.SlugField(default="")
     description = models.TextField(blank=True, null=True)
-    rating = models.DecimalField(
-        validators=[MaxValueValidator(5)], max_digits=3, decimal_places=2
-    )
     created_at = models.DateTimeField(auto_now_add=True)
     last_update = models.DateTimeField(auto_now=True)
     image = models.ImageField(
@@ -58,6 +55,8 @@ class Book(models.Model):
     def save(self, *args, **kwargs):
         if not self.rating:
             self.rating = 0
+        if not self.image:
+            self.image = "/book_img/default-book-img.jpeg"
         self.slug = slugify(self.title)
         return super().save(*args, **kwargs)
 
@@ -66,3 +65,11 @@ class Book(models.Model):
 
     class Meta:
         ordering = ["-created_at"]
+
+
+class Comment(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="comments")
+    book = models.ForeignKey(Book, on_delete=models.CASCADE, related_name="comments")
+    comment = models.CharField(max_length=250)
+    created_at = models.DateTimeField(auto_now_add=True)
+    edited = models.DateTimeField(auto_now=True)
