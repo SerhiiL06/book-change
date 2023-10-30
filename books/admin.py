@@ -2,9 +2,6 @@ from django.contrib import admin
 from .models import Genre, Author, Book, Comment
 
 
-admin.site.register(Comment)
-
-
 @admin.register(Genre)
 class GenreAdmin(admin.ModelAdmin):
     prepopulated_fields = {"slug": ["title"]}
@@ -21,3 +18,8 @@ class BookAdmin(admin.ModelAdmin):
     list_filter = ["genre", "owner"]
     search_fields = ["title"]
     prepopulated_fields = {"slug": ["title"]}
+
+
+@admin.register(Comment)
+class CommentAdmin(admin.ModelAdmin):
+    readonly_fields = ["created_at"]

@@ -13,5 +13,6 @@ urlpatterns = [
         views.DetailBookView.as_view(),
         name="detail-book",
     ),
+    path("create-book/", views.CreateBookView.as_view(), name="create-book"),
     path("comment/<slug:slug>/", views.DetailBookView.as_view(), name="add-comment"),
 ]

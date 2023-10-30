@@ -1,0 +1,81 @@
+{% include "base.html" %}
+
+
+{% load crispy_forms_tags %}
+
+
+{% block content %}
+
+     <br>
+
+        <div class="container bg-white shadow-md p-5 form-layout">
+            <div class-"text-align: center;">
+<h3> Login to the account </h3>
+
+
+            </div>
+            
+                 
+               
+
+
+            <hr>
+            <br>
+
+    <form method="POST" autocomplete="off" enctype='multipart/form-data'>
+
+                {% csrf_token %}
+
+
+
+                {{form.title|as_crispy_field}}
+
+                <br> <br>
+
+
+                {{form.description|as_crispy_field}}
+
+                <br> <br>
+
+                 {{form.image|as_crispy_field}}
+
+                <br> <br>
+
+                 {{form.genre|as_crispy_field}}
+
+                <br> <br>
+
+                 {{form.author|as_crispy_field}}
+
+                <br> <br>
+                
+
+                 {{form.tags|as_crispy_field}}
+
+                <br> <br>
+                
+                <button type="submit" class="btn btn-primary navbar-btn text-white w-100 p-2"> &nbsp; Create book </button>
+
+                <br> <br>
+
+                <div class="text-center">
+                    <h6>Read out rools after added book</h6>
+                </div>
+
+             
+
+
+            </form>
+
+
+            
+
+        </div>
+
+
+
+
+    <br> <br>
+
+
+{% endblock content %}
