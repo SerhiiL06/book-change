@@ -107,9 +107,10 @@ class GeneralProfileView(DetailView):
         return super().get_object(queryset=q)
 
     def get_context_data(self, **kwargs):
+        obj = self.get_object()
         context = super().get_context_data(**kwargs)
-        context["check_user"] = is_object_owner(self.request.user, self.get_object())
-        context["has_follow"] = is_following(self.request.user, self.get_object())
+        context["check_user"] = is_object_owner(self.request.user, obj)
+        context["has_follow"] = is_following(self.request.user, obj)
         return context
 
 

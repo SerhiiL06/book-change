@@ -20,8 +20,24 @@
         <li class="nav-item">
           <a class="nav-link active" aria-current="page" href="{% url "books:index" %}">Home</a>
         </li>
+
+       <ul class="navbar-nav">
+        {% if user.is_authenticated %}
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Book action
+          </a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="{% url "books:create-book" %}">Add book</a></li>
+            <li><a class="dropdown-item" href="#">My books</a></li>
+          </ul>
+        </li>
+        {% endif %}
+        
+        
+      </ul>
         <li class="nav-item">
-          <a class="nav-link active" href="{% url "books:create-book" %}">Add book</a>
+          <a class="nav-link active" href="#">About us</a>
         </li>
       </ul>
 

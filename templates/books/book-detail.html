@@ -42,7 +42,7 @@
                                         
                        </form>
                        {% endif %}
-                       {%cache 360 div%}
+                       {%cache 60 div%}
                     <div class="article-title">
                             <h6><a href="#">{{object.genre.title}}</a></h6>
                             <h2>{{object.title}}</h2>
@@ -68,13 +68,10 @@
                            <p>{{object.description}}</p>
                         </div>
                         <div class="nav tag-cloud">
-                            <a href="#">Design</a>
-                            <a href="#">Development</a>
-                            <a href="#">Travel</a>
-                            <a href="#">Web Design</a>
-                            <a href="#">Marketing</a>
-                            <a href="#">Research</a>
-                            <a href="#">Managment</a>
+                            {% for tag in tags %}
+                            <a href="#">{{tag.name}}</a>
+                            {% endfor %}
+                            
                         </div>
                     </article>
                     <div class="contact-form article-comment">

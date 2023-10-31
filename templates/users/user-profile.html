@@ -126,7 +126,16 @@
                       <h6 class="mb-0"> Followers </h6>
                     </div>
                     <div class="col-sm-9 text-secondary">
+                      {% if check_user %}
+                      <a href="{% url "users:followers" %}">
+                        {{object.followers.count}}
+
+                      </a>
+                      {% else %}
+
                       {{object.followers.count}}
+                      
+                      {% endif %}
                     </div>
                   </div>
 

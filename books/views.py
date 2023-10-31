@@ -8,6 +8,7 @@ from django.views.generic import ListView, View, DetailView, CreateView
 from book_relations.logic import check_bookmark
 from book_relations.models import BookRelations
 from .forms import CreateBookForm
+from taggit.models import Tag
 from .models import Book, Comment
 
 
@@ -43,10 +44,14 @@ class DetailBookView(DetailView):
         context["last_books"] = self.get_queryset()[:3]
 
         context["comments"] = (
-            Comment.objects.filter(book=self.get_object())
+            Comment.objects.filter(book=obj)
             .select_related("user")
             .order_by("-created_at")
         )
+
+        # tags
+
+        context["tags"] = obj.tags.all()
 
         return context
 
