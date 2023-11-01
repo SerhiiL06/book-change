@@ -1,0 +1,93 @@
+{% include "base.html" %}
+
+{% load static %}
+
+
+{% block css %}
+<link rel="stylesheet" type="text/css" href="{% static "css/request-detail.css" %}">
+{% endblock css %}
+
+
+
+{% block content %}
+<div class="container-fluid">
+
+<div class="container">
+  <!-- Title -->
+  <div class="d-flex justify-content-between align-items-center py-3">
+    <h2 class="h5 mb-0"><a href="#" class="text-muted"></a> Request #{{object.id}}</h2>
+  </div>
+
+  <!-- Main content -->
+  <div class="row">
+    <div class="col-lg-8">
+      <!-- Details -->
+      <div class="card mb-4">
+        <div class="card-body">
+          <div class="mb-3 d-flex justify-content-between">
+            <div>
+              <span class="me-3">{{object.created}}</span>
+              <span class="badge rounded-pill bg-info">{{object.status}}</span>
+            </div>
+            <div class="d-flex">
+              {% if not check_request %}
+
+              <form method="POST">
+                <input type="hidden" name="request_id" value="{{object.id}}">
+                {% csrf_token %}
+                <button class="btn btn-primary"><i class="bi bi-download"></i> <span class="text">OK</span></button>
+              </form>
+              
+              {% endif %}
+              <button class="btn btn-secondary"><i class="bi bi-download"></i> <span class="text">Cancel</span></button>
+            </div>
+          </div>
+          <table class="table table-borderless">
+            <tbody>
+              <tr>
+                <td>
+                  <div class="d-flex mb-2">
+                    <div class="flex-shrink-0">
+                      <img src="{{object.book.image.url}}" alt="" width="35" class="img-fluid">
+                    </div>
+                    <div class="flex-lg-grow-1 ms-3">
+                      <h4 class="small mb-0"><a href="#" class="text-reset">{{object.book.title}}</a></h4>
+                      <span class="small">Owner: {{object.book.owner}}</span>
+                    </div>
+                  </div>
+                </td>
+                <td></td>
+                
+              </tr>
+            <tfoot>
+              <tr>
+                
+              </tr>
+              <tr>
+              </tr>
+              <tr>
+                
+              </tr>
+              <tr class="fw-bold">
+                
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+      
+    <div class="col-lg-4">
+    </div>
+  </div>
+</div>
+  </div>
+
+  <div class="card mb-4">
+        <div class="card-body">
+          <h3 class="h6">Comment to request:</h3>
+          <p>{{object.comment}}</p>
+        </div>
+      </div>
+
+
+{% endblock content %}  

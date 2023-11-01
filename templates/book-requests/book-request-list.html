@@ -1,0 +1,154 @@
+{% include "base.html" %}
+{% load static %}
+{% load humanize %}
+
+
+
+{% block css %}<link rel="stylesheet" type="text/css" href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css">
+<link rel="stylesheet" type="text/css" href="{% static "css/user-list.css" %}">
+{% endblock css %}
+
+
+{% block content %}
+
+<!--received request -->
+<hr>
+<div class="container bootstrap snippets bootdey">
+<strong class="text-center">Requests Received</strong>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="main-box no-header clearfix">
+                <div class="main-box-body clearfix">
+                    
+                    <div class="table-responsive">
+                        
+                        <table class="table user-list">
+                            <thead>
+                                <tr>
+                                <th><span>BOOK</span></th>
+                                <th><span>FROM</span></th>
+                                <th><span>DATE</span></th>
+                                <th><span>Status</span></th>
+                               
+                                <th>&nbsp;</th>
+                                </tr>
+                            </thead>
+                             
+                            <tbody> 
+                                {% for request in incomming %}
+                                <tr>
+                                    <!--BOOK-->
+                                    <td>
+                                     
+                                        <a href="#" class="user-link"></a>
+                                        <span class="user-subhead">{{request.book}}r</span>
+                                    </td>
+
+                                    <!--FROM-->
+                                    <td>{{request.request_from_user}}</td>
+                                    <!--CREATED-->
+                                    <td>{{request.created|naturaltime}}</td>
+                                    <!--STATUS-->
+                                   <td>{{request.status|upper}}</td>
+
+
+                                    <td style="width: 20%;">
+                                        <a href="{% url "book_request:request-detail" request.id %}" class="table-link text-warning">
+                                            <span class="fa-stack">
+                                                <i class="fa fa-square fa-stack-2x"></i>
+                                                <i class="fa fa-search-plus fa-stack-1x fa-inverse"></i>
+                                            </span>
+                                        </a>
+                                        <a href="#" class="table-link danger">
+                                            <span class="fa-stack">
+                                                <i class="fa fa-square fa-stack-2x"></i>
+                                                <i class="fa fa-trash-o fa-stack-1x fa-inverse"></i>
+                                            </span>
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+
+                        <br><br>
+                        
+
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!--Sent requests-->
+<hr>
+<div class="container bootstrap snippets bootdey">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="main-box no-header clearfix">
+                <div class="main-box-body clearfix">
+                    <div class="table-responsive">
+                        <strong class="text-center">Requests Sent</strong>
+                        <table class="table user-list">
+                            <thead>
+                                <tr>
+                                <th><span>BOOK</span></th>
+                                <th><span>TO</span></th>
+                                <th><span>DATE</span></th>
+                                <th><span>Status</span></th>
+                               
+                                <th>&nbsp;</th>
+                                </tr>
+                            </thead>
+                             
+                            <tbody> 
+                                {% for request in outcomming %}
+                                <tr>
+                                    <td>
+                                     
+                                        <a href="#" class="user-link"></a>
+                                        <span class="user-subhead">{{request.book}}</span>
+                                    </td>
+
+                                    <!--TO-->
+                                    <td>{{request.book.owner}}</td>
+                                    <!--CREATED-->
+                                    <td>{{request.created|naturaltime}}</td>
+                                    <!--STATUS-->
+                                   <td>{{request.status|upper}}</td>
+
+                                   <td style="width: 20%;">
+                                        <a href="{% url "book_request:request-detail" request.id %}" class="table-link text-warning">
+                                            <span class="fa-stack">
+                                                <i class="fa fa-square fa-stack-2x"></i>
+                                                <i class="fa fa-search-plus fa-stack-1x fa-inverse"></i>
+                                            </span>
+                                        </a>
+                                        <a href="#" class="table-link danger">
+                                            <span class="fa-stack">
+                                                <i class="fa fa-square fa-stack-2x"></i>
+                                                <i class="fa fa-trash-o fa-stack-1x fa-inverse"></i>
+                                            </span>
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+
+                        <br><br>
+                        
+
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock content %}

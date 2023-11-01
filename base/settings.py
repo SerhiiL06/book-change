@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     "phonenumber_field",
     "django_countries",
     "debug_toolbar",
+    "django.contrib.humanize",
     "taggit",
 ]
 
@@ -79,6 +80,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "book_requests.context_processors.total_requests",
             ],
         },
     },
