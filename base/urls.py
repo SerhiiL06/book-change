@@ -21,6 +21,7 @@ urlpatterns = [
     path("users/", include("users.urls")),
     # book-relations app
     path("", include("book_relations.urls")),
+    path("", include("book_requests.urls")),
     #
     #
     # debug toolbar

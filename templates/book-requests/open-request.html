@@ -1,0 +1,70 @@
+{% include "base.html" %}
+
+
+{% load crispy_forms_tags %}
+
+
+{% block content %}
+
+     <br>
+
+        <div class="container bg-white shadow-md p-5 form-layout">
+            <div class-"text-align: center;">
+                        <div class='text-center'>
+<h3 class='test-center'>Confirm your request</h3>
+
+
+                        </div>
+                        
+
+
+            </div>
+            
+                 
+               
+
+
+            <hr>
+            <br>
+
+    <form method="POST" autocomplete="off">
+
+                {% csrf_token %}
+
+
+
+                {{form.comment|as_crispy_field}}
+
+                <br> <br>
+
+
+                <br> <br>
+                
+                <button type="submit" class="btn btn-primary navbar-btn text-white w-100 p-2"> &nbsp; Send request </button>
+
+
+              
+
+                <br> <br>
+
+            
+
+             
+
+
+            </form>
+
+                <a href="{% url "books:index" %}"> <button class="btn btn-danger navbar-btn text-white w-100 p-2"> &nbsp;  Cancel</button></a>
+            
+
+            
+
+        </div>
+
+
+
+
+    <br> <br>
+
+
+{% endblock content %}

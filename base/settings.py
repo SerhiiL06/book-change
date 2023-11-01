@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     "users",
     "api",
     "book_relations",
+    "book_requests",
     # other
     "phonenumber_field",
     "django_countries",

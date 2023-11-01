@@ -54,7 +54,7 @@ class Book(models.Model):
     def get_recommended(self, genre):
         recommend_books = list(Book.objects.filter(genre=genre).select_related("owner"))
         if len(recommend_books) < 3:
-            recommend_books += list(self.get_queryset())[:4]
+            recommend_books += Book.objects.all()[:4]
         return random.sample(recommend_books, 3)
 
     def __str__(self):

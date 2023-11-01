@@ -41,6 +41,8 @@
                                         </a>
                                         
                        </form>
+
+                       <a href="{% url "book_request:send-request" object.id %}"> <button> send request</button>  </a>
                        {% endif %}
                        {%cache 60 div%}
                     <div class="article-title">
@@ -81,6 +83,8 @@
                          <h6>{{comment.user}} | {{comment.created_at}}</h6>
 
                         {% endfor %}
+
+                        <br><br>
 
                         <h4>Leave a Reply</h4>
                         {% include "books/comment.html" %}
