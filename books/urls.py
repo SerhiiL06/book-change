@@ -15,4 +15,7 @@ urlpatterns = [
     ),
     path("create-book/", views.CreateBookView.as_view(), name="create-book"),
     path("comment/<slug:slug>/", views.DetailBookView.as_view(), name="add-comment"),
+    path("my-books/", views.MyBookListView.as_view(), name="my-books"),
+    path("update-book/<int:pk>/", views.UpdateBookView.as_view(), name="update-book"),
+    path("delete-book/<int:pk>/", views.delete_book_view, name="delete-book"),
 ]

@@ -70,7 +70,7 @@
                         </div>
                     </div>
                     <div class="product_details">
-                        <h5><a href="{% url "books:detail-book" object.slug%}">{{object.title}}k</a></h5>
+                        <h5><a href="{% url "books:detail-book" object.slug%}">{{object.title}}</a></h5>
                         <h6>Genre: {{object.genre}}</h6>
                         <ul class="product_price list-unstyled">Owner:
                           <a href="{% url "users:another-user" object.owner.id%}">

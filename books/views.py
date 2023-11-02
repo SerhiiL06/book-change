@@ -1,13 +1,23 @@
 from typing import Any
+from django.db import models
 from django.db.models import Q
 from django.core.cache import cache
+from django.shortcuts import get_object_or_404
 from django.http import HttpResponseRedirect
 from django.urls import reverse_lazy
 from django.shortcuts import render, redirect
-from django.views.generic import ListView, View, DetailView, CreateView
+from django.views.generic import (
+    ListView,
+    View,
+    DetailView,
+    CreateView,
+    UpdateView,
+    DeleteView,
+)
 from book_relations.logic import check_bookmark
 from book_relations.models import BookRelations
-from .forms import CreateBookForm
+from .forms import CreateBookForm, UpdateBookForm
+from django.core.exceptions import PermissionDenied
 from taggit.models import Tag
 from .models import Book, Comment
 
@@ -63,6 +73,15 @@ class DetailBookView(DetailView):
         return HttpResponseRedirect(request.META["HTTP_REFERER"])
 
 
+class MyBookListView(ListView):
+    template_name = "books/my-books.html"
+    model = Book
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        return queryset.filter(owner=self.request.user)
+
+
 class CreateBookView(CreateView):
     template_name = "books/create-book.html"
     model = Book
@@ -81,6 +100,27 @@ class CreateBookView(CreateView):
             return redirect("books:index")
 
         return HttpResponseRedirect(request.META["HTTP_REFERER"])
+
+
+class UpdateBookView(UpdateView):
+    template_name = "books/update-book.html"
+    model = Book
+    form_class = UpdateBookForm
+    success_url = reverse_lazy("books:my-books")
+
+    def get_object(self, queryset=None):
+        book = get_object_or_404(Book, pk=self.kwargs["pk"])
+        if self.request.user != book.owner:
+            raise PermissionDenied()
+        return super().get_object(queryset)
+
+
+def delete_book_view(request, pk):
+    book = Book.objects.get(pk=pk)
+    if request.user != book.owner:
+        raise PermissionDenied()
+    book.delete()
+    return HttpResponseRedirect(request.META["HTTP_REFERER"])
 
 
 class SearchView(View):

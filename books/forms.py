@@ -12,3 +12,11 @@ class CreateBookForm(forms.ModelForm):
     class Meta:
         model = Book
         fields = ["title", "description", "image", "genre", "author", "tags"]
+
+
+class UpdateBookForm(forms.ModelForm):
+    tags = TagField()
+
+    class Meta:
+        model = Book
+        fields = ["title", "description", "tags"]
