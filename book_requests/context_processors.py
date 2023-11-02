@@ -10,5 +10,5 @@ def total_requests(request):
                 Q(request_from_user=user) | Q(book__owner=user)
             ).count()
         }
-    else:
-        return {"total_requests": 0}
+
+    return {"total_requests": 0}

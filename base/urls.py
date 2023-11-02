@@ -26,6 +26,8 @@ urlpatterns = [
     #
     # debug toolbar
     path("__debug__/", include("debug_toolbar.urls")),
+    # captcha
+    path("captcha/", include("captcha.urls")),
 ]
 
 

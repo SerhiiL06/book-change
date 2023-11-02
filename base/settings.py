@@ -47,6 +47,8 @@ INSTALLED_APPS = [
     "django_countries",
     "debug_toolbar",
     "django.contrib.humanize",
+    "django_crontab",
+    "captcha",
     "taggit",
 ]
 
@@ -242,3 +244,9 @@ CACHES = {
         "LOCATION": "redis://127.0.0.1:6379",
     }
 }
+
+
+# Crontab
+
+
+# CRONJOBS = [("*/2 * * * *", "book_requests.signals.cleanup_history")]

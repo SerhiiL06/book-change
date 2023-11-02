@@ -1,19 +1,11 @@
-from typing import Any
-from django.db import models
 from django.db.models import Q
 from django.core.cache import cache
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponseRedirect
 from django.urls import reverse_lazy
 from django.shortcuts import render, redirect
-from django.views.generic import (
-    ListView,
-    View,
-    DetailView,
-    CreateView,
-    UpdateView,
-    DeleteView,
-)
+from django.views.generic import ListView, View, DetailView, CreateView, UpdateView
+
 from book_relations.logic import check_bookmark
 from book_relations.models import BookRelations
 from .forms import CreateBookForm, UpdateBookForm
@@ -134,7 +126,7 @@ class SearchView(View):
             Q(title__icontains=value)
             | Q(genre__title__icontains=value)
             | Q(author__name=value)
-        )
+        ).select_related("owner")
         if len(value) < 3:
             books = None
         return render(

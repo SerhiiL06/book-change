@@ -9,4 +9,4 @@ class BookRequestAdmin(admin.ModelAdmin):
 
 @admin.register(HistoryRequests)
 class HistoryRequestAdmin(admin.ModelAdmin):
-    pass
+    list_display = ["create_at"]

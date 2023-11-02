@@ -1,6 +1,6 @@
 from typing import Any
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
-from django.contrib.auth import authenticate
+from captcha.fields import CaptchaField
 from django import forms
 from .models import User, UserProfile
 from phonenumber_field.formfields import PhoneNumberField
@@ -57,6 +57,7 @@ class MessageForm(forms.Form):
     message = forms.CharField(
         widget=forms.Textarea(attrs={"placeholder": "Your message"})
     )
+    captcha = CaptchaField()
 
     def clean_field(self):
         subject = self.cleaned_data["subject"]

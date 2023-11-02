@@ -61,6 +61,7 @@ class BookRequest(models.Model):
 
 class HistoryRequests(models.Model):
     data = models.JSONField(default=dict)
+    create_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         verbose_name_plural = "History Requests"
