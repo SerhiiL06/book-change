@@ -1,6 +1,5 @@
 from django.db import models
 from users.models import User
-from numpy import mean
 from books.models import Book
 
 

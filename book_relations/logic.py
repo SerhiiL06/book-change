@@ -1,4 +1,5 @@
 from .models import BookRelations
+from django.db.models import Avg
 
 
 def check_bookmark(user, books):
@@ -10,3 +11,10 @@ def check_bookmark(user, books):
             return False
         else:
             return relation.first().bookmark
+
+
+def get_user_rating(user):
+    rating = BookRelations.objects.filter(book__owner=user).aggregate(
+        avg_user_rating=Avg("rating")
+    )["avg_user_rating"]
+    return round(rating, 2) if rating else 0

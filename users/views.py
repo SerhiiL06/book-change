@@ -16,6 +16,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView
 from django.contrib.auth import login, authenticate
 from django_email_verification import send_email
+from book_relations.logic import get_user_rating
 from .models import UserFollowing, UserProfile
 from django.urls import reverse_lazy, reverse
 from django.core.mail import send_mail
@@ -111,6 +112,7 @@ class GeneralProfileView(DetailView):
         context = super().get_context_data(**kwargs)
         context["check_user"] = is_object_owner(self.request.user, obj)
         context["has_follow"] = is_following(self.request.user, obj)
+        context["user_rating"] = get_user_rating(obj)
         return context
 
 

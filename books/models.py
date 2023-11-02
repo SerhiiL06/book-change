@@ -3,7 +3,7 @@ from taggit.managers import TaggableManager
 import random
 
 from users.models import User
-from django.core.validators import MaxValueValidator, FileExtensionValidator
+from django.core.validators import FileExtensionValidator
 from django.utils.text import slugify
 
 
