@@ -37,12 +37,14 @@
 
                                         <option value="5">5</option></select>
                                         <a href="{% url "book_relations:rating" %}"> 
-                                            <button type="button" value="{{object.id}}" id="add-rait">rait</button>
+                                            <button class="btn btn-success" type="button" value="{{object.id}}" id="add-rait">rait</button>
                                         </a>
                                         
                        </form>
 
-                       <a href="{% url "book_request:send-request" object.id %}"> <button> send request</button>  </a>
+                       <br>
+
+                       <a href="{% url "book_request:send-request" object.id %}"> <button class="btn btn-secondary"> send request</button>  </a>
                        {% endif %}
                        
                     <div class="article-title">

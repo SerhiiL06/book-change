@@ -17,4 +17,7 @@ urlpatterns = [
         views.BookRequestDetailView.as_view(),
         name="request-detail",
     ),
+    path("success-request/", views.get_book_request, name="get-request"),
+    path("canceled-request/", views.failed_book_request, name="failed-request"),
+    path("history/", views.history_list, name="history"),
 ]

@@ -1,12 +1,10 @@
-from typing import Any
-from django.db.models.query import QuerySet
 from django.shortcuts import render, HttpResponseRedirect, redirect
 from django.urls import reverse
 from .forms import BookRequestForm
 from django.views.generic import View
-from django.db.models import F
 from books.models import Book
-from .models import BookRequest
+from django.db.models import Q
+from .models import BookRequest, HistoryRequests
 from django.contrib.auth.decorators import login_required
 
 
@@ -50,13 +48,11 @@ class BookRequestsView(View):
 
 
 class BookRequestDetailView(View):
-    def get(self, request, request_id, *args, **kwargs):
+    def get(self, request, request_id):
         req = BookRequest.objects.select_related("book", "request_from_user").get(
             id=request_id
         )
         user = request.user
-
-        print(request.GET)
 
         if user not in [req.request_from_user, req.book.owner]:
             return redirect("books:index")
@@ -70,12 +66,34 @@ class BookRequestDetailView(View):
 
 
 def get_book_request(request):
-    book_request = BookRequest.objects.get(id=request.POST["request_id"])
+    if request.method == "POST":
+        book_request = BookRequest.objects.get(id=request.POST["request_id"])
 
-    book_request.book.owner = book_request.request_from_user
+        book_request.de_json("success")
 
-    book_request.save()
+        # change owner for book
+        book = Book.objects.get(id=book_request.book.id)
+        book.owner = book_request.request_from_user
+        book.save()
 
-    book_request.delete()
+        book_request.send_email_about_success_request()
 
-    return redirect("book_request:my_requests")
+        book_request.delete()
+
+        return redirect("book_request:my-requests")
+
+
+def failed_book_request(request):
+    if request.method == "POST":
+        book_request = BookRequest.objects.get(id=request.POST["request_id"])
+        book_request.de_json("failed")
+        book_request.delete()
+        return redirect("book_request:my-requests")
+
+
+def history_list(request):
+    history = HistoryRequests.objects.filter(
+        Q(data__contains={"to": str(request.user)})
+        | Q(data__contains={"from": str(request.user)})
+    )
+    return render(request, "book-requests/history.html", {"history": history})

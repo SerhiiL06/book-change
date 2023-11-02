@@ -4,8 +4,11 @@ from django.db.models import Q
 
 def total_requests(request):
     user = request.user
-    return {
-        "total_requests": BookRequest.objects.filter(
-            Q(request_from_user=user) | Q(book__owner=user)
-        ).count()
-    }
+    if user.is_authenticated:
+        return {
+            "total_requests": BookRequest.objects.filter(
+                Q(request_from_user=user) | Q(book__owner=user)
+            ).count()
+        }
+    else:
+        return {"total_requests": 0}

@@ -2,6 +2,8 @@ from django.db import models
 from books.models import Book
 from users.models import User
 from django.core.mail import send_mail
+from django.utils import timezone
+from base.settings import EMAIL_HOST_USER
 
 
 class BookRequest(models.Model):
@@ -35,7 +37,33 @@ class BookRequest(models.Model):
             fail_silently=True,
         )
 
+    def send_email_about_success_request(self):
+        subject = f"Alarm, your request was success!"
+        message = f"{self.book} is your! :)"
+        send_mail(
+            subject=subject,
+            message=message,
+            from_email=EMAIL_HOST_USER,
+            recipient_list=[self.request_from_user.email],
+            fail_silently=True,
+        )
 
-# class HistoryRequest(models.Model):
+    def de_json(self, status):
+        data = {
+            "book": self.book.title,
+            "from": self.request_from_user.full_name(),
+            "to": self.book.owner.full_name(),
+            "status": status,
+            "opetation_date": str(timezone.now().date()),
+        }
+        HistoryRequests.objects.create(data=data)
 
-#     book_request = models.JSONField()
+
+class HistoryRequests(models.Model):
+    data = models.JSONField(default=dict)
+
+    class Meta:
+        verbose_name_plural = "History Requests"
+
+    def __str__(self) -> str:
+        return self.data["book"]
