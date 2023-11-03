@@ -1,6 +1,8 @@
 from pathlib import Path
 import os
+from os import getenv
 import environ
+from django.core.management.utils import get_random_secret_key
 
 env = environ.Env()
 
@@ -11,13 +13,14 @@ environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
 
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = env("SECRET_KEY")
+SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", get_random_secret_key())
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = env("DEBUG")
+DEBUG = os.getenv("DEBUG", "False") == "True"
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
 
+DEVELOPMENT_MODE = os.getenv("DEVELOPMENT_MODE", "False") == "True"
 
 # Application definition
 
@@ -31,6 +34,11 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     # email verification
     "django_email_verification",
+    # allauth
+    "allauth",
+    "allauth.account",
+    "allauth.socialaccount",
+    "allauth.socialaccount.providers.github",
     # restframework
     "rest_framework",
     "rest_framework.authtoken",
@@ -64,6 +72,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "debug_toolbar.middleware.DebugToolbarMiddleware",
+    "allauth.account.middleware.AccountMiddleware",
 ]
 
 ROOT_URLCONF = "base.urls"
@@ -108,10 +117,10 @@ DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql_psycopg2",
         "NAME": "bookchange_db",
-        "USER": env("DATABASE_USER"),
-        "PASSWORD": env("DATABASE_PASSWORD"),
-        "HOST": env("DATABASE_HOST"),
-        "PORT": env("DATABASE_PORT"),
+        "USER": "postgres",
+        "PASSWORD": "",
+        "HOST": "localhost",
+        "PORT": "5432",
     }
 }
 
@@ -152,6 +161,8 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
+STATIC_ROOT = BASE_DIR / "staticfiles"
+
 STATIC_URL = "static/"
 
 STATICFILES_DIRS = [BASE_DIR / "static"]
@@ -174,6 +185,31 @@ LOGIN_URL = "users:login"
 LOGIN_REDIRECT_URL = "books:index"
 
 LOGOUT_REDIRECT_URL = "books:index"
+
+
+# Allauth
+ACCOUNT_USER_MODEL = "users.User"
+
+
+ACCOUNT_AUTHENTICATION_METHOD = "email"
+CCOUNT_EMAIL_VERIFICATION = "mandatory"
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_UNIQUE_EMAIL = True
+ACCOUNT_USER_MODEL_USERNAME_FIELD = None
+ACCOUNT_USERNAME_REQUIRED = False
+
+SOCIALACCOUNT_PROVIDERS = {
+    "github": {
+        "SCOPE": [
+            "user",
+            "repo",
+            "read:org",
+        ],
+    }
+}
+
+
+SIDE_ID = 1
 
 # Email verification
 

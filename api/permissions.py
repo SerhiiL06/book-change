@@ -1,6 +1,6 @@
 from rest_framework.permissions import BasePermission
+from rest_framework.permissions import SAFE_METHODS
 
-SAFE_METHODS = ("GET", "HEAD", "OPTIONS")
 
 UPDATE_METHODS = ("PUT", "PATCH")
 

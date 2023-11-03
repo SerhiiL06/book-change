@@ -19,6 +19,8 @@ urlpatterns = [
     path("", include("books.urls")),
     # users app
     path("users/", include("users.urls")),
+    # allauth
+    path("accounts/", include("allauth.urls")),
     # book-relations app
     path("", include("book_relations.urls")),
     path("", include("book_requests.urls")),

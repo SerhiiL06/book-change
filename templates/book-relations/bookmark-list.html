@@ -1,0 +1,11 @@
+{% include "base.html" %}
+
+
+{% block context %}
+
+    {% for object in object_list %}
+            {{object.book.title}}
+    {% endfor %}
+
+
+{% endblock context %}
