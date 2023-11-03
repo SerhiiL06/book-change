@@ -1,5 +1,5 @@
 from django import forms
-from .models import Book, Genre, Author
+from .models import Book, Genre, Author, BookInPDF
 from taggit.forms import TagField
 
 
@@ -20,3 +20,11 @@ class UpdateBookForm(forms.ModelForm):
     class Meta:
         model = Book
         fields = ["title", "description", "tags"]
+
+
+class PDFBookForm(forms.ModelForm):
+    pdf = forms.FileField(widget=forms.FileInput())
+
+    class Meta:
+        model = BookInPDF
+        fields = ["pdf"]

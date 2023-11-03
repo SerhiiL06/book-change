@@ -73,3 +73,17 @@ class Comment(models.Model):
 
     def __str__(self):
         return f"{self.user.email} add comment to {self.book.title}"
+
+
+class BookInPDF(models.Model):
+    book = models.OneToOneField(Book, on_delete=models.CASCADE, related_name="in_pdf")
+
+    pdf = models.FileField(
+        upload_to="book_in_pdf/", validators=[FileExtensionValidator("pdf")]
+    )
+
+    class Meta:
+        verbose_name_plural = "Books_in_pdf"
+
+    def __str__(self):
+        return self.book.title

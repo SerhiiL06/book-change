@@ -1,17 +1,18 @@
+from typing import Any
 from django.db.models import Q
 from django.core.cache import cache
 from django.shortcuts import get_object_or_404
-from django.http import HttpResponseRedirect
+from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.urls import reverse_lazy
 from django.shortcuts import render, redirect
 from django.views.generic import ListView, View, DetailView, CreateView, UpdateView
 
 from book_relations.logic import check_bookmark
 from book_relations.models import BookRelations
-from .forms import CreateBookForm, UpdateBookForm
+from .forms import CreateBookForm, UpdateBookForm, PDFBookForm
 from django.core.exceptions import PermissionDenied
 from taggit.models import Tag
-from .models import Book, Comment
+from .models import Book, Comment, BookInPDF
 
 
 class IndexView(ListView):
@@ -98,6 +99,7 @@ class UpdateBookView(UpdateView):
     template_name = "books/update-book.html"
     model = Book
     form_class = UpdateBookForm
+    pdf_form = PDFBookForm
     success_url = reverse_lazy("books:my-books")
 
     def get_object(self, queryset=None):
@@ -105,6 +107,25 @@ class UpdateBookView(UpdateView):
         if self.request.user != book.owner:
             raise PermissionDenied()
         return super().get_object(queryset)
+
+    def get(self, request, *args, **kwargs):
+        form = UpdateBookForm(instance=self.get_object())
+        book, _ = BookInPDF.objects.get_or_create(book=self.get_object())
+        pdf_form = PDFBookForm(instance=book)
+        context = {"form": form, "pdf_form": pdf_form}
+        return render(request, "books/update-book.html", context)
+
+    def post(self, request, *args, **kwargs):
+        form = UpdateBookForm(request.POST, request.FILES, instance=self.get_object())
+        book = BookInPDF.objects.get(book=self.get_object())
+
+        if form.is_valid():
+            form.save()
+            book.pdf = request.FILES["pdf"]
+            book.save()
+            return redirect("books:index")
+
+        return HttpResponseRedirect(request.META["HTTP_REFERER"])
 
 
 def delete_book_view(request, pk):

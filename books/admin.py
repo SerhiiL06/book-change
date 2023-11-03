@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Genre, Author, Book, Comment
+from .models import Genre, Author, Book, Comment, BookInPDF
 
 
 @admin.register(Genre)
@@ -23,3 +23,8 @@ class BookAdmin(admin.ModelAdmin):
 @admin.register(Comment)
 class CommentAdmin(admin.ModelAdmin):
     readonly_fields = ["created_at"]
+
+
+@admin.register(BookInPDF)
+class BookInPDFAdmin(admin.ModelAdmin):
+    pass
