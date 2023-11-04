@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     "api",
     "book_relations",
     "book_requests",
+    "chat",
     # other
     "phonenumber_field",
     "django_countries",
@@ -116,29 +117,29 @@ WSGI_APPLICATION = "base.wsgi.application"
 
 
 # FOR TEST
-# DATABASES = {
-#     "default": {
-#         "ENGINE": "django.db.backends.postgresql_psycopg2",
-#         "NAME": "bookchange_db",
-#         "USER": "postgres",
-#         "PASSWORD": "",
-#         "HOST": "localhost",
-#         "PORT": "5432",
-#     }
-# }
-
-
-# FOR DOCKER
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql_psycopg2",
-        "NAME": "book-change-db",
+        "NAME": "bookchange_db",
         "USER": "postgres",
-        "PASSWORD": "my-password",
-        "HOST": "172.27.0.2",
+        "PASSWORD": "",
+        "HOST": "localhost",
         "PORT": "5432",
     }
 }
+
+
+# FOR DOCKER
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.postgresql_psycopg2",
+#         "NAME": "book-change-db",
+#         "USER": "postgres",
+#         "PASSWORD": "my-password",
+#         "HOST": "172.27.0.2",
+#         "PORT": "5432",
+#     }
+# }
 
 FIXTURE_DIRS = [BASE_DIR / "fixtures"]
 
@@ -285,21 +286,21 @@ REST_FRAMEWORK = {
 
 
 # Redis
-SESSION_ENGINE = "django.contrib.sessions.backends.cache"
-SESSION_CACHE_ALIAS = "default"
+# SESSION_ENGINE = "django.contrib.sessions.backends.cache"
+# SESSION_CACHE_ALIAS = "default"
 
-SESSION_COOKIE_AGE = 12000
-SESSION_SAVE_EVERY_REQUEST = True
+# SESSION_COOKIE_AGE = 12000
+# SESSION_SAVE_EVERY_REQUEST = True
 
-REDIS_HOST = "127.0.0.1"
-REDIS_PORT = "6379"
+# REDIS_HOST = "127.0.0.1"
+# REDIS_PORT = "6379"
 
-CACHES = {
-    "default": {
-        "BACKEND": "django.core.cache.backends.redis.RedisCache",
-        "LOCATION": "redis://127.0.0.1:6379",
-    }
-}
+# CACHES = {
+#     "default": {
+#         "BACKEND": "django.core.cache.backends.redis.RedisCache",
+#         "LOCATION": "redis://127.0.0.1:6379",
+#     }
+# }
 
 
 # Crontab

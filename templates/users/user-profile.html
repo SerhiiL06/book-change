@@ -30,7 +30,13 @@
                       {% endif %}
                       <a href="{% url "users:send-mail" object.email%}">
 
-                        <button class="btn btn-outline-primary">Message</button>
+                        <button class="btn btn-outline-primary">Send email</button>
+                      </a>
+                      <hr>
+
+                      <a href="{% url "chat:chat" object.id %}">
+
+                        <button class="btn btn-outline-success">Write</button>
                       </a>
                       
                        {% endif %}
