@@ -1,6 +1,6 @@
 from pathlib import Path
 import os
-from os import getenv
+
 import environ
 from django.core.management.utils import get_random_secret_key
 
@@ -286,21 +286,21 @@ REST_FRAMEWORK = {
 
 
 # Redis
-# SESSION_ENGINE = "django.contrib.sessions.backends.cache"
-# SESSION_CACHE_ALIAS = "default"
+SESSION_ENGINE = "django.contrib.sessions.backends.cache"
+SESSION_CACHE_ALIAS = "default"
 
-# SESSION_COOKIE_AGE = 12000
-# SESSION_SAVE_EVERY_REQUEST = True
+SESSION_COOKIE_AGE = 12000
+SESSION_SAVE_EVERY_REQUEST = True
 
-# REDIS_HOST = "127.0.0.1"
-# REDIS_PORT = "6379"
+REDIS_HOST = "127.0.0.1"
+REDIS_PORT = "6379"
 
-# CACHES = {
-#     "default": {
-#         "BACKEND": "django.core.cache.backends.redis.RedisCache",
-#         "LOCATION": "redis://127.0.0.1:6379",
-#     }
-# }
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379",
+    }
+}
 
 
 # Crontab
