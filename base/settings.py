@@ -13,14 +13,14 @@ environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
 
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", get_random_secret_key())
+SECRET_KEY = env("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv("DEBUG", "False") == "True"
 
 ALLOWED_HOSTS = ["localhost", "127.0.0.1", "0.0.0.0"]
 
-DEVELOPMENT_MODE = os.getenv("DEVELOPMENT_MODE", "False") == "True"
+# DEVELOPMENT_MODE = os.getenv("DEVELOPMENT_MODE", "False") == "True"
 
 # Application definition
 
@@ -60,7 +60,6 @@ INSTALLED_APPS = [
     "django_countries",
     "debug_toolbar",
     "django.contrib.humanize",
-    "django_crontab",
     "captcha",
     "taggit",
 ]
