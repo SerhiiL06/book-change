@@ -43,9 +43,9 @@
                        </form>
 
                        <br>
-
+                       {% if object.in_pdf %}
                         <a href="{{ object.in_pdf.pdf.url }}" target="_blank" class="btn btn-primary">PDF</a>
-
+                            {% endif %}
                        <br><br>
 
                        <a href="{% url "book_request:send-request" object.id %}"> <button class="btn btn-secondary"> send request</button>  </a>

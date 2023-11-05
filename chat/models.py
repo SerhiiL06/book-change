@@ -11,3 +11,6 @@ class PrivateMessage(models.Model):
     )
     message = models.CharField(max_length=350)
     timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Sender {self.sender} | recipient {self.recipient}"

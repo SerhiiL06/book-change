@@ -21,7 +21,7 @@ class IndexView(ListView):
     paginate_by = 8
 
     def get_queryset(self):
-        return super().get_queryset().select_related("owner").select_related("genre")
+        return super().get_queryset().select_related("owner", "genre")
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

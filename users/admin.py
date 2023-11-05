@@ -9,8 +9,8 @@ from .models import User, UserFollowing, UserProfile
 
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
-    list_display = ["email", "is_active", "full_name"]
-    list_editable = ["is_active"]
+    list_display = ["email", "last_activity", "full_name"]
+
     list_display_links = ["full_name"]
     actions = ["set_active", "set_unactive"]
     date_hierarchy = "join_at"

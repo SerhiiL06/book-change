@@ -79,7 +79,7 @@ class BookInPDF(models.Model):
     book = models.OneToOneField(Book, on_delete=models.CASCADE, related_name="in_pdf")
 
     pdf = models.FileField(
-        upload_to="book_in_pdf/", validators=[FileExtensionValidator("pdf")]
+        upload_to="book_in_pdf/", validators=[FileExtensionValidator(["pdf"])]
     )
 
     class Meta:

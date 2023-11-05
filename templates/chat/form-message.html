@@ -1,0 +1,17 @@
+ <!--Form message-->
+                <div class="chat-message clearfix">
+                    <form action="{% url "chat:send-message" %}" method="POST">
+                        {% csrf_token %}
+                    <div class="input-group mb-0">  
+                        <div class="input-group-prepend">
+                            
+                               <span class="input-group-text"> <button type="submit" ><i class="fa fa-send"></i></button></span>
+                         
+                        </div>
+                        <input type="hidden" name="recipient" value="{{ recipient.id}}">
+                        <input name='message' type="text" class="form-control" required="true" placeholder="Enter text here...">                                    
+                    </div>
+                    </form>
+                </div>
+
+<!--End form-->

@@ -72,7 +72,11 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    # Debug toolbar
     "debug_toolbar.middleware.DebugToolbarMiddleware",
+    # user activity
+    "users.middleware.UserActivityMiddleware",
+    # allauth
     "allauth.account.middleware.AccountMiddleware",
 ]
 

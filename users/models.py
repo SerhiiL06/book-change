@@ -1,4 +1,6 @@
 from django.db import models
+from datetime import timedelta
+from django.utils import timezone
 
 from django.contrib.auth.models import (
     PermissionsMixin,
@@ -36,6 +38,14 @@ class CustomUserManager(BaseUserManager):
 class User(PermissionsMixin, AbstractBaseUser):
     """User model"""
 
+    ONLINE = "online"
+    OFFLINE = "offline"
+
+    USER_STATUSES = (
+        (ONLINE, "offline"),
+        (OFFLINE, "online"),
+    )
+
     email = models.EmailField(unique=True, max_length=50)
     first_name = models.CharField(max_length=50, null=True, blank=True)
     last_name = models.CharField(max_length=50, null=True, blank=True)
@@ -45,6 +55,9 @@ class User(PermissionsMixin, AbstractBaseUser):
 
     join_at = models.DateTimeField(auto_now_add=True)
     last_login = models.DateTimeField(auto_now=True)
+    status = models.CharField(max_length=10, choices=USER_STATUSES, default=OFFLINE)
+
+    last_activity = models.DateTimeField(null=True, default=timezone.now)
 
     is_active = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
@@ -64,6 +77,14 @@ class User(PermissionsMixin, AbstractBaseUser):
 
     def full_name(self):
         return f"{self.first_name} {self.last_name}"
+
+    def check_activity(self):
+        if self.last_activity < (timezone.now() - timedelta(minutes=5)):
+            self.status = "offline"
+            self.save()
+            return False
+        else:
+            return True
 
     def __str__(self) -> str:
         return self.full_name()
