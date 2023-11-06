@@ -6,7 +6,7 @@ from .models import User, UserProfile
 class MyBooksSerializer(serializers.ModelSerializer):
     class Meta:
         model = Book
-        fields = ["title", "rating"]
+        fields = ["title"]
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
@@ -26,8 +26,7 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = [
             "id",
-            "first_name",
-            "last_name",
+            "full_name",
             "join_at",
             "email",
             "total_books",

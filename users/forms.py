@@ -46,6 +46,7 @@ class ProfileForm(forms.ModelForm):
 class OptionalUserInformationForm(forms.ModelForm):
     country = CountryField(blank_label="{select country}")
     phone_number = PhoneNumberField(region="UA", required=False)
+    social_link = forms.URLField(widget=forms.URLInput, required=False)
 
     class Meta:
         model = UserProfile

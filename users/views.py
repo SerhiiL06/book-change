@@ -20,6 +20,7 @@ from book_relations.logic import get_user_rating
 from .models import UserFollowing, UserProfile
 from django.urls import reverse_lazy, reverse
 from django.core.mail import send_mail
+from base import settings
 
 from .forms import (
     RegisterForm,
@@ -29,6 +30,7 @@ from .forms import (
     MessageForm,
 )
 from .models import User
+from .tasks import send_email_verification, send_message
 
 
 class RegisterView(CreateView):
@@ -37,16 +39,17 @@ class RegisterView(CreateView):
     template_name = "users/register/register.html"
     model = User
     form_class = RegisterForm
-    success_url = reverse_lazy("users:email-verifications-sent")
 
     def post(self, request):
         form = RegisterForm(request.POST)
 
         if form.is_valid():
             user = form.save()
-            send_email(user)
+
+            user = User.objects.get(email=request.POST["email"])
+            send_email_verification.delay(user.id)
             return redirect("users:email-verification-sent")
-        return HttpResponseRedirect("users:register")
+        return HttpResponseRedirect(request.META["HTTP_REFERER"])
 
 
 class UserLoginView(LoginView):
@@ -166,13 +169,8 @@ class SendMailView(FormView):
             to_email = kwargs.get("email")
             message = form.cleaned_data["message"]
             subject = form.cleaned_data["subject"]
-            send_mail(
-                subject=subject,
-                message=message,
-                from_email=self.request.user.email,
-                recipient_list=[to_email],
-                fail_silently=True,
-            )
+
+            send_message.delay(subject, message)
 
             user = User.objects.get(email=to_email)
 

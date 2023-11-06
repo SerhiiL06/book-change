@@ -49,9 +49,13 @@ class BookRequestsView(View):
 
 class BookRequestDetailView(View):
     def get(self, request, request_id):
-        req = BookRequest.objects.select_related("book", "request_from_user").get(
-            id=request_id
-        )
+        try:
+            req = BookRequest.objects.select_related("book", "request_from_user").get(
+                id=request_id
+            )
+        except:
+            return redirect("book_request:history")
+
         user = request.user
 
         if user not in [req.request_from_user, req.book.owner]:

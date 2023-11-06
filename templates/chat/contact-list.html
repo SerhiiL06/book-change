@@ -24,7 +24,7 @@
                         <img src="{{contact.sender.image.url}}" alt="avatar">
                         <div class="about">
                             <div class="name">{{contact.sender.full_name}}</div>    
-                            <div class="status"> <i class="fa fa-circle {{contact.sender.status}}"></i> {{contact.sender.status}} </div>                                            
+                            <div class="status"> <i class="fa fa-circle {{contact.sender.status}}"></i> {% if contact.sender.check_activity %} Online  {% else %} {{contact.sender.last_activity|naturaltime}} {% endif %}  </div>                                            
                         </div>
                     </a>
                          {% else %}
@@ -32,7 +32,7 @@
                         <img src="{{contact.recipient.image.url}}" alt="avatar">
                         <div class="about">
                             <div class="name">{{contact.recipient.full_name}}</div>    
-                            <div class="status"> <i class="fa fa-circle {{contact.recipient.status}}"></i>  {% if contact.recipient.check_activity %} Online {% else %} {{contact.recipient.last_activity|naturaltime}} {% endif %}  </div>                                            
+                            <div class="status"> <i class="fa fa-circle {{contact.recipient.status}}"></i>   {% if contact.recipient.check_activity %} Online {% else %} {{contact.recipient.last_activity|naturaltime}} {% endif %}  </div>                                            
                         </div>
                     </a>
                         {% endif %}

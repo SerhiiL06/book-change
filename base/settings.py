@@ -2,7 +2,6 @@ from pathlib import Path
 import os
 
 import environ
-from django.core.management.utils import get_random_secret_key
 
 env = environ.Env()
 
@@ -14,6 +13,8 @@ environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = env("SECRET_KEY")
+
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "proj.settings")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv("DEBUG", "False") == "True"
@@ -255,12 +256,15 @@ EMAIL_MAIL_PAGE_TEMPLATE = "users/register/email-verification-success.html"
 EMAIL_MAIL_CALLBACK = email_verified_callback
 
 
-EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+# EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+
 EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 587
-EMAIL_HOST_USER = env("EMAIL_HOST_USER")
-EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD")  # os.environ['password_key'] suggested
+EMAIL_HOST_USER = "sergiy06061997@gmail.com"
+EMAIL_HOST_PASSWORD = "rxhuparrjvmafsud"  # os.environ['password_key'] suggested
 EMAIL_USE_TLS = True
+
+# EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 
 
 # rest framework
@@ -306,7 +310,10 @@ CACHES = {
 }
 
 
+# Celery
+
+CELERY_BROKER_URL = "redis://127.0.0.1:6379/0"
+CELERY_RESULT_BACKEND = "redis://127.0.0.1:6379/0"
+
+
 # Crontab
-
-
-# CRONJOBS = [("*/2 * * * *", "book_requests.signals.cleanup_history")]
