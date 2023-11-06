@@ -17,6 +17,7 @@ Pipfile
 Pipfile.lock
 staticfiles/
 *.rdb
+*.db
 
 
 docker-compose.yml

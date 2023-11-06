@@ -1,8 +1,8 @@
-from django.urls import path
-from django.contrib.auth.views import LogoutView
 from django.contrib.auth.decorators import login_required
-
+from django.contrib.auth.views import LogoutView
 from django.shortcuts import render
+from django.urls import path
+
 from . import views
 
 app_name = "users"
@@ -40,4 +40,5 @@ urlpatterns = [
     path("follow-to/<int:user_id>/", login_required(views.follow), name="follow"),
     path("user-list/", views.FollowersListView.as_view(), name="followers"),
     path("folloging-list/", views.MyFollowingView.as_view(), name="my-following"),
+    path("newletter-settings/", views.EmailNewsLetterView.as_view(), name="newsletter"),
 ]

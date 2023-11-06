@@ -1,5 +1,6 @@
-from .models import BookRelations
 from django.db.models import Avg
+
+from .models import BookRelations
 
 
 def check_bookmark(user, books):

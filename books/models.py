@@ -1,10 +1,11 @@
-from django.db import models
-from taggit.managers import TaggableManager
 import random
 
-from users.models import User
 from django.core.validators import FileExtensionValidator
+from django.db import models
 from django.utils.text import slugify
+from taggit.managers import TaggableManager
+
+from users.models import User
 
 
 class Genre(models.Model):

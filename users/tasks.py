@@ -1,20 +1,43 @@
 from celery import shared_task
-from .models import User
 from django.core.mail import send_mail
-from django_email_verification import send_email
+from django.template.loader import render_to_string
+from django_email_verification import send_email as email
+
+from base.settings import EMAIL_HOST_USER
+
+from .models import User
 
 
 @shared_task()
-def send_email_verification(user):
-    send_email(user)
+def send_email_verification(email):
+    user = User.objects.get(email=email)
+    email(user)
 
 
 @shared_task()
-def send_message(subject, message):
+def send_message(subject, message, email):
     send_mail(
         subject=subject,
         message=message,
-        from_email="sergiy06061997@gmail.com",
-        recipient_list=["sergiy06061997@gmail.com"],
+        from_email=EMAIL_HOST_USER,
+        recipient_list=[email],
         fail_silently=True,
     )
+
+
+temp = render_to_string("email-templates/news-email.html")
+
+
+@shared_task()
+def send_news_email():
+    users = User.objects.filter(news_letter__news_mailer=True)
+    for u in users:
+        send_mail(
+            subject="It's can be interesting for you",
+            message=temp,
+            from_email=EMAIL_HOST_USER,
+            recipient_list=[u.email],
+            fail_silently=False,
+        )
+
+    print(f"{len(users)} message will be sent")

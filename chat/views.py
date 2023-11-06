@@ -1,8 +1,10 @@
-from django.shortcuts import render, HttpResponseRedirect
 from django.db.models import Q
+from django.shortcuts import HttpResponseRedirect, render
 from django.views.generic import View
-from .models import PrivateMessage
+
 from users.models import User
+
+from .models import PrivateMessage
 
 
 class ChatView(View):

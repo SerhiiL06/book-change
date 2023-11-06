@@ -1,6 +1,7 @@
 from django.db import models
-from users.models import User
+
 from books.models import Book
+from users.models import User
 
 
 class BookRelationsManager(models.Manager):

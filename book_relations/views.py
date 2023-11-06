@@ -1,7 +1,9 @@
-from django.shortcuts import HttpResponseRedirect, render
 from django.db.models import Q
-from .models import BookRelations
+from django.shortcuts import HttpResponseRedirect, render
+
 from books.models import Book
+
+from .models import BookRelations
 
 
 def add_to_bookmark(request, book_slug):

@@ -1,18 +1,20 @@
 from typing import Any
-from django.db.models import Q
+
 from django.core.cache import cache
-from django.shortcuts import get_object_or_404
+from django.core.exceptions import PermissionDenied
+from django.db.models import Q
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
-from django.shortcuts import render, redirect
-from django.views.generic import ListView, View, DetailView, CreateView, UpdateView
+from django.views.generic import (CreateView, DetailView, ListView, UpdateView,
+                                  View)
+from taggit.models import Tag
 
 from book_relations.logic import check_bookmark
 from book_relations.models import BookRelations
-from .forms import CreateBookForm, UpdateBookForm, PDFBookForm
-from django.core.exceptions import PermissionDenied
-from taggit.models import Tag
-from .models import Book, Comment, BookInPDF
+
+from .forms import CreateBookForm, PDFBookForm, UpdateBookForm
+from .models import Book, BookInPDF, Comment
 
 
 class IndexView(ListView):

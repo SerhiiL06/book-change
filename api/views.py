@@ -1,14 +1,16 @@
-from rest_framework import viewsets, permissions
-from rest_framework.authentication import TokenAuthentication
-from rest_framework.response import Response
-from users.models import User
-from .permissions import IsOwnerOrStaffOrSuperuser
-from users.serializers import UserSerializer
-from books.models import Genre, Book
-from books.serializers import GenreSerializer, BookSerializer, BookListSerializer
 from django_filters import rest_framework as filter
-from rest_framework.filters import SearchFilter, OrderingFilter
-from rest_framework import filters
+from rest_framework import filters, permissions, viewsets
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.filters import OrderingFilter, SearchFilter
+from rest_framework.response import Response
+
+from books.models import Book, Genre
+from books.serializers import (BookListSerializer, BookSerializer,
+                               GenreSerializer)
+from users.models import User
+from users.serializers import UserSerializer
+
+from .permissions import IsOwnerOrStaffOrSuperuser
 
 
 class UserViewSet(viewsets.ModelViewSet):

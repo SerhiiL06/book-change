@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+
+ <br>
+
+        <div class="container bg-white shadow-md p-5 form-layout">
+
+            <h3> Your newsletter </h3>
+
+           
+
+            <hr>
+            <br>
+
+    <form method="POST"  action="{% url "users:newsletter" %}"  autocomplete="off">
+
+                {% csrf_token %}
+
+
+                {{form.sending_out_offers|as_crispy_field}}
+
+                <br> <br>
+
+                {{form.news_mailer|as_crispy_field}}
+
+                <button type="submit" class="btn btn-primary navbar-btn text-white w-100 p-2"> &nbsp; Update newsletter setting </button>
+
+                <br> <br>
+
+                <div class="text-center">
+
+                    <a href="{% url "users:login" %}"> Dashboard </a>
+
+                </div>
+
+
+            </form>
+
+
+            
+
+        </div>
+
+
+
+    </body>
+
+    <br> <br>
+
+
+
+{% endblock content %}

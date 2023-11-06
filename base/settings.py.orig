@@ -63,8 +63,6 @@ INSTALLED_APPS = [
     "django.contrib.humanize",
     "captcha",
     "taggit",
-    "django_celery_beat",
-    "django_celery_results",
 ]
 
 MIDDLEWARE = [
@@ -315,8 +313,8 @@ CACHES = {
 # Celery
 
 CELERY_BROKER_URL = "redis://127.0.0.1:6379/0"
-CELERY_RESULT_BASKEND = "redis://127.0.0.1:6379/0"
-CELERY_broker_connection_retry_on_startup = True
+CELERY_RESULT_BACKEND = "redis://127.0.0.1:6379/0"
+CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
 
-broker_connection_retry_on_startup = False
+
 # Crontab

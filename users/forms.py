@@ -1,10 +1,12 @@
 from typing import Any
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+
 from captcha.fields import CaptchaField
 from django import forms
-from .models import User, UserProfile
-from phonenumber_field.formfields import PhoneNumberField
+from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django_countries.fields import CountryField
+from phonenumber_field.formfields import PhoneNumberField
+
+from .models import User, UserEmailNewsLetter, UserProfile
 
 
 class RegisterForm(UserCreationForm):
@@ -65,3 +67,9 @@ class MessageForm(forms.Form):
         message = self.cleaned_data["message"]
         data = {"subject": subject, "message": message}
         return data
+
+
+class EmailNewsLetterForm(forms.ModelForm):
+    class Meta:
+        model = UserEmailNewsLetter
+        fields = ["sending_out_offers", "news_mailer"]

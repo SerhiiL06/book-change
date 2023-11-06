@@ -1,35 +1,24 @@
 from typing import Any
-from django.db.models.query import QuerySet
-from django.core.exceptions import PermissionDenied
-from .decorators import is_object_owner, is_following
-from django.shortcuts import redirect, HttpResponseRedirect, render
-from django.views.generic import (
-    CreateView,
-    UpdateView,
-    DetailView,
-    TemplateView,
-    ListView,
-    FormView,
-)
-from django.http import HttpResponseForbidden
+
+from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView
-from django.contrib.auth import login, authenticate
-from django_email_verification import send_email
-from book_relations.logic import get_user_rating
-from .models import UserFollowing, UserProfile
-from django.urls import reverse_lazy, reverse
+from django.core.exceptions import PermissionDenied
 from django.core.mail import send_mail
-from base import settings
+from django.db.models.query import QuerySet
+from django.forms.models import BaseModelForm
+from django.http import HttpRequest, HttpResponse, HttpResponseForbidden
+from django.shortcuts import HttpResponseRedirect, redirect, render
+from django.urls import reverse, reverse_lazy
+from django.views.generic import (CreateView, DetailView, FormView, ListView,
+                                  TemplateView, UpdateView)
 
-from .forms import (
-    RegisterForm,
-    LoginForm,
-    ProfileForm,
-    OptionalUserInformationForm,
-    MessageForm,
-)
-from .models import User
+from book_relations.logic import get_user_rating
+
+from .decorators import is_following, is_object_owner
+from .forms import (EmailNewsLetterForm, LoginForm, MessageForm,
+                    OptionalUserInformationForm, ProfileForm, RegisterForm)
+from .models import User, UserEmailNewsLetter, UserFollowing, UserProfile
 from .tasks import send_email_verification, send_message
 
 
@@ -44,10 +33,8 @@ class RegisterView(CreateView):
         form = RegisterForm(request.POST)
 
         if form.is_valid():
-            user = form.save()
-
-            user = User.objects.get(email=request.POST["email"])
-            send_email_verification.delay(user.id)
+            form.save()
+            send_email_verification.delay(form.instance.email)
             return redirect("users:email-verification-sent")
         return HttpResponseRedirect(request.META["HTTP_REFERER"])
 
@@ -169,10 +156,22 @@ class SendMailView(FormView):
             to_email = kwargs.get("email")
             message = form.cleaned_data["message"]
             subject = form.cleaned_data["subject"]
+            email = request.user.email
 
-            send_message.delay(subject, message)
+            send_message.delay(subject, message, email)
 
             user = User.objects.get(email=to_email)
 
             return redirect("users:another-user", pk=user.pk)
         return render(request, "users/send-mail.html", {"form": form})
+
+
+class EmailNewsLetterView(UpdateView):
+    template_name = "users/options/email-newsletter.html"
+    model = UserEmailNewsLetter
+    form_class = EmailNewsLetterForm
+    success_url = reverse_lazy("users:newsletter")
+
+    def get_object(self, queryset=None):
+        obj, _ = UserEmailNewsLetter.objects.get_or_create(user=self.request.user)
+        return obj

@@ -1,6 +1,6 @@
 from django.contrib import admin
-from .models import User, UserFollowing, UserProfile
 
+from .models import User, UserEmailNewsLetter, UserFollowing, UserProfile
 
 # @admin.action(description="Set active status")
 # def set_unactive(modeladmin, request, queryset):
@@ -36,3 +36,6 @@ class FollowingAdmin(admin.ModelAdmin):
 @admin.register(UserProfile)
 class UserProfileAdmin(admin.ModelAdmin):
     pass
+
+
+admin.site.register(UserEmailNewsLetter)

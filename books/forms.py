@@ -1,6 +1,7 @@
 from django import forms
-from .models import Book, Genre, Author, BookInPDF
 from taggit.forms import TagField
+
+from .models import Author, Book, BookInPDF, Genre
 
 
 class CreateBookForm(forms.ModelForm):

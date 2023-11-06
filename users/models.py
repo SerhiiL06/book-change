@@ -1,14 +1,11 @@
-from django.db import models
 from datetime import timedelta
-from django.utils import timezone
 
-from django.contrib.auth.models import (
-    PermissionsMixin,
-    BaseUserManager,
-    AbstractBaseUser,
-)
-from phonenumber_field.modelfields import PhoneNumberField
+from django.contrib.auth.models import (AbstractBaseUser, BaseUserManager,
+                                        PermissionsMixin)
+from django.db import models
+from django.utils import timezone
 from django_countries.fields import CountryField
+from phonenumber_field.modelfields import PhoneNumberField
 
 
 class CustomUserManager(BaseUserManager):
@@ -112,3 +109,13 @@ class UserFollowing(models.Model):
     followers_id = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name="following"
     )
+
+
+class UserEmailNewsLetter(models.Model):
+    user = models.OneToOneField(
+        User, on_delete=models.CASCADE, related_name="news_letter"
+    )
+
+    sending_out_offers = models.BooleanField(default=False)
+
+    news_mailer = models.BooleanField(default=False)

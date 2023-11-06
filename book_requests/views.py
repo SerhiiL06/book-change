@@ -1,11 +1,13 @@
-from django.shortcuts import render, HttpResponseRedirect, redirect
-from django.urls import reverse
-from .forms import BookRequestForm
-from django.views.generic import View
-from books.models import Book
-from django.db.models import Q
-from .models import BookRequest, HistoryRequests
 from django.contrib.auth.decorators import login_required
+from django.db.models import Q
+from django.shortcuts import HttpResponseRedirect, redirect, render
+from django.urls import reverse
+from django.views.generic import View
+
+from books.models import Book
+
+from .forms import BookRequestForm
+from .models import BookRequest, HistoryRequests
 
 
 @login_required()

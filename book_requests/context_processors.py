@@ -1,5 +1,6 @@
-from .models import BookRequest
 from django.db.models import Q
+
+from .models import BookRequest
 
 
 def total_requests(request):

@@ -1,5 +1,6 @@
 from django.contrib import admin
-from .models import Genre, Author, Book, Comment, BookInPDF
+
+from .models import Author, Book, BookInPDF, Comment, Genre
 
 
 @admin.register(Genre)

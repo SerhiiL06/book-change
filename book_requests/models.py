@@ -1,9 +1,10 @@
+from django.core.mail import send_mail
 from django.db import models
+from django.utils import timezone
+
+from base.settings import EMAIL_HOST_USER
 from books.models import Book
 from users.models import User
-from django.core.mail import send_mail
-from django.utils import timezone
-from base.settings import EMAIL_HOST_USER
 
 
 class BookRequest(models.Model):
