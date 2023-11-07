@@ -17,7 +17,7 @@ SECRET_KEY = env("SECRET_KEY")
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "proj.settings")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv("DEBUG", "False") == "True"
+DEBUG = env("DEBUG")
 
 ALLOWED_HOSTS = ["localhost", "127.0.0.1", "0.0.0.0"]
 
@@ -126,26 +126,25 @@ WSGI_APPLICATION = "base.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql_psycopg2",
-        "NAME": "bookchange_db",
-        "USER": "postgres",
-        "PASSWORD": "",
-        "HOST": "localhost",
-        "PORT": "5432",
+        "NAME": os.environ.get("DB_NAME"),
+        "USER": os.environ.get("DB_USER"),
+        "PASSWORD": os.environ.get("DB_PASSWORD"),
+        "HOST": os.environ.get("DB_HOST"),
     }
 }
 
 
-# FOR DOCKER
 # DATABASES = {
 #     "default": {
 #         "ENGINE": "django.db.backends.postgresql_psycopg2",
-#         "NAME": "book-change-db",
+#         "NAME": "bookchange_db",
 #         "USER": "postgres",
-#         "PASSWORD": "my-password",
-#         "HOST": "172.27.0.2",
+#         "PASSWORD": "",
+#         "HOST": "localhost",
 #         "PORT": "5432",
 #     }
 # }
+
 
 FIXTURE_DIRS = [BASE_DIR / "fixtures"]
 

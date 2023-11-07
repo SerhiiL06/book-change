@@ -25,16 +25,13 @@ def send_message(subject, message, email):
     )
 
 
-temp = render_to_string("email-templates/news-email.html")
-
-
 @shared_task()
 def send_news_email():
     users = User.objects.filter(news_letter__news_mailer=True)
     for u in users:
         send_mail(
             subject="It's can be interesting for you",
-            message=temp,
+            message="Hello",
             from_email=EMAIL_HOST_USER,
             recipient_list=[u.email],
             fail_silently=False,
