@@ -4,12 +4,9 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView
 from django.core.exceptions import PermissionDenied
-from django.core.mail import send_mail
-from django.db.models.query import QuerySet
-from django.forms.models import BaseModelForm
-from django.http import HttpRequest, HttpResponse, HttpResponseForbidden
+from django.http import HttpResponseForbidden
 from django.shortcuts import HttpResponseRedirect, redirect, render
-from django.urls import reverse, reverse_lazy
+from django.urls import reverse_lazy
 from django.views.generic import (CreateView, DetailView, FormView, ListView,
                                   TemplateView, UpdateView)
 
@@ -23,7 +20,7 @@ from .tasks import send_email_verification, send_message
 
 
 class RegisterView(CreateView):
-    """Registration form"""
+    """Registration user form"""
 
     template_name = "users/register/register.html"
     model = User
@@ -34,12 +31,16 @@ class RegisterView(CreateView):
 
         if form.is_valid():
             form.save()
-            send_email_verification.delay(form.instance.email)
+
+            # Send email verification for user
+            send_email_verification.delay(form.instance.pk)
             return redirect("users:email-verification-sent")
         return HttpResponseRedirect(request.META["HTTP_REFERER"])
 
 
 class UserLoginView(LoginView):
+    """Login user form"""
+
     template_name = "users/login/login.html"
     form_class = LoginForm
     redirect_authenticated_user = True
@@ -61,11 +62,14 @@ class UserLoginView(LoginView):
 
 
 class UserUpdateView(UpdateView):
+    """User update form"""
+
     template_name = "users/profile.html"
     model = User
     form_class = OptionalUserInformationForm
     success_url = reverse_lazy("users:profile")
 
+    # Get user object
     def get_object(self, queryset=None):
         return self.request.user
 
@@ -89,6 +93,8 @@ class UserUpdateView(UpdateView):
 
 
 class GeneralProfileView(DetailView):
+    """Another user profile view"""
+
     template_name = "users/user-profile.html"
     model = User
     context_object_name = "object"
@@ -100,7 +106,9 @@ class GeneralProfileView(DetailView):
     def get_context_data(self, **kwargs):
         obj = self.get_object()
         context = super().get_context_data(**kwargs)
+        # checking if this is a user profile
         context["check_user"] = is_object_owner(self.request.user, obj)
+        # checking if user has a follow
         context["has_follow"] = is_following(self.request.user, obj)
         context["user_rating"] = get_user_rating(obj)
         return context
@@ -108,9 +116,15 @@ class GeneralProfileView(DetailView):
 
 @login_required(redirect_field_name="users:login")
 def follow(request, user_id):
+    """
+    Subscription and unsubscribe process
+
+    """
     user = User.objects.get(id=user_id)
+    # the user cannot subscribe to himself
     if is_object_owner(request.user.id, user_id):
         return HttpResponseForbidden("Invalid")
+
     obj, create = UserFollowing.objects.get_or_create(
         user_id=user, followers_id=request.user
     )
@@ -120,10 +134,14 @@ def follow(request, user_id):
 
 
 class UserOptionsView(TemplateView):
+    """User optional page"""
+
     template_name = "users/user-options.html"
 
 
 class FollowersListView(ListView):
+    """List of user followers"""
+
     template_name = "users/tables/followers-list.html"
     model = UserFollowing
 
@@ -133,6 +151,8 @@ class FollowersListView(ListView):
 
 
 class MyFollowingView(ListView):
+    """Following user page"""
+
     template_name = "users/tables/following-list.html"
     model = UserFollowing
 
@@ -142,6 +162,8 @@ class MyFollowingView(ListView):
 
 
 class SendMailView(FormView):
+    """Email send form"""
+
     form_class = MessageForm
 
     def get(self, request, *args, **kwargs):
@@ -156,9 +178,9 @@ class SendMailView(FormView):
             to_email = kwargs.get("email")
             message = form.cleaned_data["message"]
             subject = form.cleaned_data["subject"]
-            email = request.user.email
 
-            send_message.delay(subject, message, email)
+            # email send with celery task
+            send_message.delay(subject, message, to_email)
 
             user = User.objects.get(email=to_email)
 
@@ -167,6 +189,8 @@ class SendMailView(FormView):
 
 
 class EmailNewsLetterView(UpdateView):
+    """Newsletter page"""
+
     template_name = "users/options/email-newsletter.html"
     model = UserEmailNewsLetter
     form_class = EmailNewsLetterForm

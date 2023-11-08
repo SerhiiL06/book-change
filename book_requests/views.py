@@ -8,6 +8,8 @@ from books.models import Book
 
 from .forms import BookRequestForm
 from .models import BookRequest, HistoryRequests
+from .tasks import (send_email_about_success_request,
+                    send_notification_about_request)
 
 
 @login_required()
@@ -31,7 +33,7 @@ def send_book_request(request, book_id):
         )
 
         # Send mail
-        book_request.send_notification_about_request()
+        send_notification_about_request.delay(book.id)
         return HttpResponseRedirect(reverse("books:index"))
 
     return render(request, "book-requests/open-request.html", {"form": form})
@@ -82,7 +84,9 @@ def get_book_request(request):
         book.owner = book_request.request_from_user
         book.save()
 
-        book_request.send_email_about_success_request()
+        send_email_about_success_request.delay(
+            book=book.title, user_id=book_request.request_from_user.id
+        )
 
         book_request.delete()
 

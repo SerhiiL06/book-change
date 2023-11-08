@@ -38,11 +38,11 @@ class BookSerializer(serializers.ModelSerializer):
     genre = serializers.SerializerMethodField()
     owner = serializers.SerializerMethodField()
     created_at = serializers.SerializerMethodField()
-    avg_rating = serializers.SerializerMethodField()
+    rating = serializers.SerializerMethodField()
 
     class Meta:
         model = Book
-        exclude = ["slug", "rating", "last_update"]
+        exclude = ["slug", "last_update"]
 
     def get_description(self, obj):
         return f"{obj.description[:20]}..."
@@ -59,6 +59,6 @@ class BookSerializer(serializers.ModelSerializer):
     def get_author(self, obj):
         return obj.author.name
 
-    def get_avg_rating(self, obj):
+    def get_rating(self, obj):
         rating = BookRelations.objects.get_rating(obj)
         return rating

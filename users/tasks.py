@@ -1,7 +1,6 @@
 from celery import shared_task
 from django.core.mail import send_mail
-from django.template.loader import render_to_string
-from django_email_verification import send_email as email
+from django_email_verification import send_email
 
 from base.settings import EMAIL_HOST_USER
 
@@ -9,9 +8,10 @@ from .models import User
 
 
 @shared_task()
-def send_email_verification(email):
-    user = User.objects.get(email=email)
-    email(user)
+def send_email_verification(user_id):
+    user = User.objects.get(pk=user_id)
+    print(type(user))
+    send_email(user)
 
 
 @shared_task()

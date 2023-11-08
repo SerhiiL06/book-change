@@ -27,28 +27,6 @@ class BookRequest(models.Model):
     def __str__(self) -> str:
         return f"Requst from {self.request_from_user} to book '{self.book.title}'"
 
-    def send_notification_about_request(self):
-        subject = f"Hey your book {self.book} want user. Check site"
-        message = f"Now one of the user want to get your book"
-        send_mail(
-            subject=subject,
-            message=message,
-            from_email=self.request_from_user.email,
-            recipient_list=[self.book.owner.email],
-            fail_silently=True,
-        )
-
-    def send_email_about_success_request(self):
-        subject = f"Alarm, your request was success!"
-        message = f"{self.book} is your! :)"
-        send_mail(
-            subject=subject,
-            message=message,
-            from_email=EMAIL_HOST_USER,
-            recipient_list=[self.request_from_user.email],
-            fail_silently=True,
-        )
-
     def de_json(self, status):
         data = {
             "book": self.book.title,

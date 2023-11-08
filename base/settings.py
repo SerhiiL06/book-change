@@ -14,12 +14,13 @@ environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = env("SECRET_KEY")
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "proj.settings")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "base.settings")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env("DEBUG")
 
 ALLOWED_HOSTS = ["localhost", "127.0.0.1", "0.0.0.0"]
+
 
 # DEVELOPMENT_MODE = os.getenv("DEVELOPMENT_MODE", "False") == "True"
 
@@ -122,10 +123,10 @@ WSGI_APPLICATION = "base.wsgi.application"
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 
-# FOR TEST
+# FOR DOCKER
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.postgresql_psycopg2",
+        "ENGINE": "django.db.backends.postgresql",
         "NAME": os.environ.get("DB_NAME"),
         "USER": os.environ.get("DB_USER"),
         "PASSWORD": os.environ.get("DB_PASSWORD"),
@@ -133,6 +134,8 @@ DATABASES = {
     }
 }
 
+
+# Local DB
 
 # DATABASES = {
 #     "default": {
@@ -300,21 +303,21 @@ SESSION_CACHE_ALIAS = "default"
 SESSION_COOKIE_AGE = 12000
 SESSION_SAVE_EVERY_REQUEST = True
 
-REDIS_HOST = "127.0.0.1"
+REDIS_HOST = "redis"
 REDIS_PORT = "6379"
 
 CACHES = {
     "default": {
         "BACKEND": "django.core.cache.backends.redis.RedisCache",
-        "LOCATION": "redis://127.0.0.1:6379",
+        "LOCATION": "redis://redis:6379",
     }
 }
 
 
 # Celery
 
-CELERY_BROKER_URL = "redis://127.0.0.1:6379/0"
-CELERY_RESULT_BASKEND = "redis://127.0.0.1:6379/0"
+CELERY_BROKER_URL = "redis://redis:6379/0"
+CELERY_RESULT_BASKEND = "redis://redis:6379/0"
 CELERY_broker_connection_retry_on_startup = True
 
 broker_connection_retry_on_startup = False
