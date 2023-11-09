@@ -10,8 +10,9 @@ urlpatterns = [
     # djoser
     path("api/auth/", include("djoser.urls")),
     re_path(r"^auth/", include("djoser.urls.authtoken")),
-    # api app
+    # api apps
     path("api/", include("api.urls")),
+    path("api-users/", include("users_api.urls")),
     # email verification
     path("email/", include(email_urls)),
     # books app

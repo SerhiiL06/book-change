@@ -10,7 +10,6 @@ from .models import User
 @shared_task()
 def send_email_verification(user_id):
     user = User.objects.get(pk=user_id)
-    print(type(user))
     send_email(user)
 
 

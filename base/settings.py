@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     # my_apps
     "books",
     "users",
+    "users_api",
     "api",
     "book_relations",
     "book_requests",
