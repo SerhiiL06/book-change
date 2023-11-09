@@ -19,6 +19,7 @@ urlpatterns = [
     path("", include("books.urls")),
     # users app
     path("users/", include("users.urls")),
+    path("api-books/", include("books_api.urls")),
     # allauth
     path("accounts/", include("allauth.urls")),
     # book-relations app

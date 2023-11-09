@@ -20,19 +20,19 @@
                     
                     <li class="clearfix">
                         {% if contact.sender != user %}
-                        <a href="{% url "chat:chat" contact.sender.id%}">
-                        <img src="{{contact.sender.image.url}}" alt="avatar">
+                        <a href="{% url "chat:chat" contact.id%}">
+                        <img src="{{contact.image.url}}" alt="avatar">
                         <div class="about">
-                            <div class="name">{{contact.sender.full_name}}</div>    
-                            <div class="status"> <i class="fa fa-circle {{contact.sender.status}}"></i> {% if contact.sender.check_activity %} Online  {% else %} {{contact.sender.last_activity|naturaltime}} {% endif %}  </div>                                            
+                            <div class="name">{{contact.full_name}}</div>    
+                            <div class="status"> <i class="fa fa-circle {{contact.status}}"></i> {% if contact.check_activity %} Online  {% else %} {{contact.last_activity|naturaltime}} {% endif %}  </div>                                            
                         </div>
                     </a>
                          {% else %}
                           <a href="{% url "chat:chat" contact.recipient.id%}">
                         <img src="{{contact.recipient.image.url}}" alt="avatar">
                         <div class="about">
-                            <div class="name">{{contact.recipient.full_name}}</div>    
-                            <div class="status"> <i class="fa fa-circle {{contact.recipient.status}}"></i>   {% if contact.recipient.check_activity %} Online {% else %} {{contact.recipient.last_activity|naturaltime}} {% endif %}  </div>                                            
+                            <div class="name">{{contact.full_name}}</div>    
+                            <div class="status"> <i class="fa fa-circle {{contact.status}}"></i>   {% if contact.recipient.check_activity %} Online {% else %} {{contact.recipient.last_activity|naturaltime}} {% endif %}  </div>                                            
                         </div>
                     </a>
                         {% endif %}

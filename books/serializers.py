@@ -13,7 +13,7 @@ class GenreSerializer(serializers.ModelSerializer):
 
 class BookListSerializer(serializers.ModelSerializer):
     owner = serializers.SerializerMethodField()
-    genre = serializers.SerializerMethodField()
+
     avg_rating = serializers.SerializerMethodField()
 
     class Meta:
@@ -23,15 +23,23 @@ class BookListSerializer(serializers.ModelSerializer):
     def get_owner(self, obj):
         return obj.owner.full_name()
 
-    def get_genre(self, obj):
-        return obj.genre.title
-
     def get_avg_rating(self, obj):
         rating = BookRelations.objects.get_rating(obj)
-        return rating
+        return rating if rating else f"None rating"
 
 
-class BookSerializer(serializers.ModelSerializer):
+class CreateBookSerializer(serializers.Serializer):
+    title = serializers.CharField()
+    description = serializers.CharField()
+    genre_id = serializers.IntegerField()
+    author_id = serializers.IntegerField()
+    owner_id = serializers.IntegerField(required=False)
+
+    def create(self, validated_data):
+        return Book.objects.create(**validated_data)
+
+
+class BookDetailSerializer(serializers.ModelSerializer):
     title = serializers.CharField()
     description = serializers.SerializerMethodField()
     author = serializers.SerializerMethodField()
@@ -42,7 +50,24 @@ class BookSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Book
-        exclude = ["slug", "last_update"]
+        fields = [
+            "title",
+            "description",
+            "author",
+            "genre",
+            "owner",
+            "created_at",
+            "rating",
+        ]
+
+    def create(self, validated_data):
+        new_book = Book.objects.create(
+            title=validated_data["title"],
+            description=validated_data["description"],
+            genre=validated_data["genre"],
+            author=validated_data["author"],
+        )
+        return new_book
 
     def get_description(self, obj):
         return f"{obj.description[:20]}..."

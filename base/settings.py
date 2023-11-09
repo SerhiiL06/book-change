@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     "crispy_bootstrap5",
     # my_apps
     "books",
+    "books_api",
     "users",
     "users_api",
     "api",

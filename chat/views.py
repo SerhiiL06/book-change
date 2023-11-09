@@ -1,6 +1,7 @@
 from django.db.models import Q
 from django.shortcuts import HttpResponseRedirect, render
 from django.views.generic import View
+from .logic import get_unique
 
 from users.models import User
 
@@ -15,13 +16,12 @@ class ChatView(View):
             | Q(sender=user, recipient=request.user)
         ).select_related("sender", "recipient")
 
-        contact_list = (
-            PrivateMessage.objects.filter(
-                Q(sender=request.user) | Q(recipient=request.user)
-            )
-            .select_related("recipient", "sender")
-            .distinct("sender")
-        )
+        recipients = get_unique(request, "sender", "recipient")
+        senders = get_unique(request, "recipient", "sender")
+
+        unique_ids = list(recipients.union(senders))
+
+        contact_list = User.objects.filter(id__in=unique_ids)
 
         context = {
             "messages": messages,
