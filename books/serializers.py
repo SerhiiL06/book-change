@@ -5,29 +5,6 @@ from book_relations.models import BookRelations
 from .models import Author, Book, Genre
 
 
-class GenreSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Genre
-        fields = ["title"]
-
-
-class BookListSerializer(serializers.ModelSerializer):
-    owner = serializers.SerializerMethodField()
-
-    avg_rating = serializers.SerializerMethodField()
-
-    class Meta:
-        model = Book
-        fields = ["id", "title", "genre", "owner", "avg_rating"]
-
-    def get_owner(self, obj):
-        return obj.owner.full_name()
-
-    def get_avg_rating(self, obj):
-        rating = BookRelations.objects.get_rating(obj)
-        return rating if rating else f"None rating"
-
-
 class CreateBookSerializer(serializers.Serializer):
     title = serializers.CharField()
     description = serializers.CharField()
@@ -87,3 +64,54 @@ class BookDetailSerializer(serializers.ModelSerializer):
     def get_rating(self, obj):
         rating = BookRelations.objects.get_rating(obj)
         return rating
+
+
+class BookListSerializer(serializers.ModelSerializer):
+    owner = serializers.SerializerMethodField()
+    genre = serializers.SerializerMethodField()
+    avg_rating = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Book
+        fields = ["id", "title", "genre", "owner", "avg_rating"]
+
+    def get_owner(self, obj):
+        return obj.owner.full_name()
+
+    def get_genre(self, obj):
+        return obj.genre.title
+
+    def get_avg_rating(self, obj):
+        rating = BookRelations.objects.get_rating(obj)
+        return rating if rating else f"None rating"
+
+
+class GenreSerializer(serializers.ModelSerializer):
+    books = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Genre
+        fields = ["title", "books"]
+
+    def get_books(self, obj):
+        return obj.books.count()
+
+
+class GenreDetailSerializer(serializers.ModelSerializer):
+    books = BookListSerializer(many=True)
+
+    class Meta:
+        model = Genre
+        fields = ["title", "books"]
+
+
+class AuthorListSerializer(serializers.ModelSerializer):
+    country = serializers.CharField(read_only=True)
+    total_books = serializers.SerializerMethodField(read_only=True)
+
+    class Meta:
+        model = Author
+        fields = ["name", "country", "total_books"]
+
+    def get_total_books(self, obj):
+        return obj.books.count()
