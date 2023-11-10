@@ -24,6 +24,7 @@ urlpatterns = [
     path("accounts/", include("allauth.urls")),
     # book-relations app
     path("", include("book_relations.urls")),
+    path("api-books-relations/", include("book_relations_api.urls")),
     path("", include("book_requests.urls")),
     # chat app
     path("chat/", include("chat.urls")),
