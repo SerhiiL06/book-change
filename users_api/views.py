@@ -6,8 +6,13 @@ from users.tasks import send_message
 from .permissions import IsAuthenticatedAndOwner
 from http import HTTPStatus
 from django.conf import settings
-from users.models import User
-from users.serializers import UserSerializer, UserDetailSerializer, EmailSerializer
+from users.models import User, UserFollowing
+from users.serializers import (
+    UserSerializer,
+    UserDetailSerializer,
+    EmailSerializer,
+    UserFollowingSerializer,
+)
 
 
 class UsersAPIView(APIView):
@@ -52,6 +57,30 @@ class DetailUserAPIView(APIView):
             user.delete()
             return Response({"delete": "object delete"})
         return Response({"You dont have permission for this "})
+
+
+class MyFollowersAPIView(APIView):
+    """Followers list"""
+
+    def get(self, request):
+        queryset = UserFollowing.objects.filter(user_id=request.user)
+        serializer = UserFollowingSerializer(instance=queryset, many=True)
+        return Response({"my_followers": serializer.data})
+
+
+class MyFollowingAPIView(APIView):
+    """Subsctiption list"""
+
+    def get(self, request):
+        queryset = UserFollowing.objects.filter(followers_id=request.user)
+        serializer = UserFollowingSerializer(instance=queryset, many=True)
+        return Response({"my_followers": serializer.data})
+
+    def post(self, request):
+        serialazer = UserFollowingSerializer(data=request.data)
+        serialazer.is_valid(raise_exception=True)
+        serialazer.save(followers_id=request.user)
+        return Response(status=200)
 
 
 class SendEmailAPIView(APIView):

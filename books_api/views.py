@@ -4,7 +4,7 @@ from rest_framework.views import APIView
 from http import HTTPStatus
 
 
-from books.models import Book, Author, Genre
+from books.models import Book, Author, Genre, Comment
 from books.serializers import (
     BookListSerializer,
     GenreSerializer,
@@ -12,7 +12,19 @@ from books.serializers import (
     GenreDetailSerializer,
     BookDetailSerializer,
     CreateBookSerializer,
+    CommentSerializer,
 )
+
+
+class CommentAPIView(APIView):
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+    def post(self, request):
+        serializer = CommentSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(user=request.user)
+
+        return Response({"created": serializer.data})
 
 
 class AuthorListAPIView(APIView):

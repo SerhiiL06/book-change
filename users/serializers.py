@@ -1,10 +1,10 @@
 from rest_framework import serializers
 
-from django.core.mail import send_mail
+from rest_framework.response import Response
 from django.conf import settings
 from books.models import Book
 
-from .models import User, UserProfile
+from .models import User, UserProfile, UserFollowing
 
 
 class MyBooksSerializer(serializers.ModelSerializer):
@@ -83,6 +83,32 @@ class UserDetailSerializer(serializers.ModelSerializer):
 
     def get_total_books(self, obj):
         return obj.my_books.count()
+
+
+class UserFollowingSerializer(serializers.ModelSerializer):
+    # user_id = serializers.SerializerMethodField()
+    followers_id = serializers.SerializerMethodField()
+
+    class Meta:
+        model = UserFollowing
+        fields = ["user_id", "followers_id"]
+
+    def create(self, validated_data):
+        user, create = UserFollowing.objects.get_or_create(
+            user_id=validated_data["user_id"],
+            followers_id=validated_data["followers_id"],
+        )
+        if not create:
+            user.delete()
+            return Response(status=202)
+
+        return user
+
+    def get_user_id(self, obj):
+        return obj.user_id.full_name()
+
+    def get_followers_id(self, obj):
+        return obj.followers_id.full_name()
 
 
 class EmailSerializer(serializers.Serializer):

@@ -1,7 +1,10 @@
 from datetime import timedelta
 
-from django.contrib.auth.models import (AbstractBaseUser, BaseUserManager,
-                                        PermissionsMixin)
+from django.contrib.auth.models import (
+    AbstractBaseUser,
+    BaseUserManager,
+    PermissionsMixin,
+)
 from django.db import models
 from django.utils import timezone
 from django_countries.fields import CountryField
@@ -109,6 +112,9 @@ class UserFollowing(models.Model):
     followers_id = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name="following"
     )
+
+    def __str__(self) -> str:
+        return f"{self.followers_id} follow on {self.user_id}"
 
 
 class UserEmailNewsLetter(models.Model):

@@ -6,4 +6,5 @@ urlpatterns = [
     path(
         "book-relations-list/<int:book_id>/", views.BookRelationsDetailAPIView.as_view()
     ),
+    path("my-bookmark/", views.UserBookmarkListAPIView.as_view()),
 ]

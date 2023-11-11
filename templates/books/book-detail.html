@@ -1,6 +1,7 @@
 {% include "base.html" %}
 {% load static %}
 {% load cache %}
+{% load humanize %}
 
 {% load crispy_forms_tags %}
 
@@ -88,7 +89,7 @@
                         {% for comment in comments %}
                                                                                             
                          <h4>{{comment.comment}}  </h4> 
-                         <h6>{{comment.user}} | {{comment.created_at}}</h6>
+                         <h6>{{comment.user}} | {{comment.created_at|naturaltime}}</h6>
 
                         {% endfor %}
 

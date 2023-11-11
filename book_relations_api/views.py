@@ -81,3 +81,12 @@ class BookRelationsDetailAPIView(APIView):
         serializer.save()
 
         return Response({"object was updated"})
+
+
+class UserBookmarkListAPIView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        queryset = BookRelations.objects.filter(user=request.user, bookmark=True)
+        serializer = BookRelationsSerializer(instance=queryset, many=True)
+        return Response({"bookmark_list": serializer.data})

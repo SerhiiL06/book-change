@@ -28,6 +28,7 @@ urlpatterns = [
     path("", include("book_requests.urls")),
     # chat app
     path("chat/", include("chat.urls")),
+    path("api-chat/", include("chat_api.urls")),
     #
     #
     # debug toolbar

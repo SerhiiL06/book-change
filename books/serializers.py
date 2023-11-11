@@ -2,7 +2,20 @@ from rest_framework import serializers
 
 from book_relations.models import BookRelations
 
-from .models import Author, Book, Genre
+from .models import Author, Book, Genre, Comment
+
+
+class CommentSerializer(serializers.ModelSerializer):
+    created_at = serializers.DateTimeField(required=False)
+    edited = serializers.DateTimeField(required=False)
+    user = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Comment
+        fields = ["user", "book", "comment", "created_at", "edited"]
+
+    def get_user(self, obj):
+        return obj.user.full_name()
 
 
 class CreateBookSerializer(serializers.Serializer):
@@ -24,6 +37,7 @@ class BookDetailSerializer(serializers.ModelSerializer):
     owner = serializers.SerializerMethodField()
     created_at = serializers.SerializerMethodField()
     rating = serializers.SerializerMethodField()
+    comments = serializers.SerializerMethodField()
 
     class Meta:
         model = Book
@@ -35,6 +49,7 @@ class BookDetailSerializer(serializers.ModelSerializer):
             "owner",
             "created_at",
             "rating",
+            "comments",
         ]
 
     def create(self, validated_data):
@@ -63,7 +78,11 @@ class BookDetailSerializer(serializers.ModelSerializer):
 
     def get_rating(self, obj):
         rating = BookRelations.objects.get_rating(obj)
-        return rating
+        return round(rating, 2)
+
+    def get_comments(self, obj):
+        comments = Comment.objects.filter(book=obj)
+        return CommentSerializer(comments, many=True).data
 
 
 class BookListSerializer(serializers.ModelSerializer):
