@@ -24,9 +24,16 @@ app.conf.update(timezone="Europe/Kyiv")
 
 
 app.conf.beat_schedule = {
-    "send_news_every_5_minutes": {
+    "send_news_every_day": {
         "task": "users.tasks.send_news_email",
-        "schedule": crontab(minute="*/2"),
+        "schedule": crontab(minute="0", hour="20"),
+    }
+}
+
+app.conf.beat_schedule = {
+    "send_email_every_monday": {
+        "task": "users.tasks.send_offers",
+        "schedule": crontab(minute="0", hour="12", day_of_week="1"),
     }
 }
 

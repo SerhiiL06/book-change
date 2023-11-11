@@ -5,7 +5,6 @@ from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-
 from book_relations.models import BookRelations
 from book_relations.serializers import BookRelationsSerializer
 from book_requests.models import BookRequest

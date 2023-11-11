@@ -1,10 +1,10 @@
-from rest_framework import serializers
-
-from rest_framework.response import Response
 from django.conf import settings
+from rest_framework import serializers
+from rest_framework.response import Response
+
 from books.models import Book
 
-from .models import User, UserProfile, UserFollowing
+from .models import User, UserEmailNewsLetter, UserFollowing, UserProfile
 
 
 class MyBooksSerializer(serializers.ModelSerializer):
@@ -119,3 +119,9 @@ class EmailSerializer(serializers.Serializer):
     def save(self, **kwargs):
         message = kwargs.get("message")
         to_user = kwargs.get("to")
+
+
+class NewsLetterSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserEmailNewsLetter
+        fields = ["sending_out_offers", "news_mailer"]

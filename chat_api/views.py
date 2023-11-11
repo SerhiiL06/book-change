@@ -1,9 +1,10 @@
+from django.db.models import Q
+from rest_framework import permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework import permissions
+
 from chat.models import PrivateMessage
 from chat.serializers import PrivateMessageSerializer
-from django.db.models import Q
 from users.models import User
 
 

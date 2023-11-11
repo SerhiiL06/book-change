@@ -1,19 +1,14 @@
-from rest_framework.response import Response
-from rest_framework import permissions
-from rest_framework.views import APIView
 from http import HTTPStatus
 
+from rest_framework import permissions
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
-from books.models import Book, Author, Genre, Comment
-from books.serializers import (
-    BookListSerializer,
-    GenreSerializer,
-    AuthorListSerializer,
-    GenreDetailSerializer,
-    BookDetailSerializer,
-    CreateBookSerializer,
-    CommentSerializer,
-)
+from books.models import Author, Book, Comment, Genre
+from books.serializers import (AuthorListSerializer, BookDetailSerializer,
+                               BookListSerializer, CommentSerializer,
+                               CreateBookSerializer, GenreDetailSerializer,
+                               GenreSerializer)
 
 
 class CommentAPIView(APIView):

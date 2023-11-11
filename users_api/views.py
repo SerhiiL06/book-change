@@ -1,18 +1,18 @@
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
-from django_filters import rest_framework as filter
-from users.tasks import send_message
-from .permissions import IsAuthenticatedAndOwner
 from http import HTTPStatus
+
 from django.conf import settings
-from users.models import User, UserFollowing
-from users.serializers import (
-    UserSerializer,
-    UserDetailSerializer,
-    EmailSerializer,
-    UserFollowingSerializer,
-)
+from django_filters import rest_framework as filter
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.views import APIView
+
+from users.models import User, UserEmailNewsLetter, UserFollowing
+from users.serializers import (EmailSerializer, NewsLetterSerializer,
+                               UserDetailSerializer, UserFollowingSerializer,
+                               UserSerializer)
+from users.tasks import send_message
+
+from .permissions import IsAuthenticatedAndOwner
 
 
 class UsersAPIView(APIView):
@@ -93,3 +93,20 @@ class SendEmailAPIView(APIView):
         send_message.delay(subject=subject, message=message, email=to_user)
 
         return Response({"email was sent!"}, status=HTTPStatus.CREATED)
+
+
+class NewsLetterSettingsAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        queryset, _ = UserEmailNewsLetter.objects.get_or_create(user=request.user)
+        serializer = NewsLetterSerializer(instance=queryset)
+        return Response({"newsletter_settings": serializer.data})
+
+    def patch(self, request):
+        queryset, _ = UserEmailNewsLetter.objects.get_or_create(user=request.user)
+        serializer = NewsLetterSerializer(data=request.data, instance=queryset)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        return Response({"your newsletter": "was update"})

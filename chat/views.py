@@ -1,10 +1,10 @@
 from django.db.models import Q
 from django.shortcuts import HttpResponseRedirect, render
 from django.views.generic import View
-from .logic import get_unique
 
 from users.models import User
 
+from .logic import get_unique
 from .models import PrivateMessage
 
 

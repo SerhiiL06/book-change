@@ -15,18 +15,20 @@ urlpatterns = [
     path("api-users/", include("users_api.urls")),
     # email verification
     path("email/", include(email_urls)),
-    # books app
+    # books apps
     path("", include("books.urls")),
-    # users app
+    # users apps
     path("users/", include("users.urls")),
     path("api-books/", include("books_api.urls")),
     # allauth
     path("accounts/", include("allauth.urls")),
-    # book-relations app
+    # book-relations apps
     path("", include("book_relations.urls")),
     path("api-books-relations/", include("book_relations_api.urls")),
+    # book-requests apps
     path("", include("book_requests.urls")),
-    # chat app
+    path("api-books-requests/", include("book_requests_api.urls")),
+    # chat apps
     path("chat/", include("chat.urls")),
     path("api-chat/", include("chat_api.urls")),
     #

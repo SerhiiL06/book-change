@@ -33,7 +33,26 @@ def send_news_email():
             message="Hello",
             from_email=EMAIL_HOST_USER,
             recipient_list=[u.email],
-            fail_silently=False,
+            fail_silently=True,
         )
 
     print(f"{len(users)} message will be sent")
+
+
+@shared_task()
+def send_offers():
+    users = User.objects.filter(news_letter__sending_out_offers=True)
+    if users:
+        for u in users:
+            send_mail(
+                subject="See new books",
+                message="Hello. see new books in our site",
+                from_email=EMAIL_HOST_USER,
+                recipient_list=[u.email],
+                fail_silently=True,
+            )
+
+        print(f"{len(users)} message will be sent")
+
+    else:
+        print("sub empty")

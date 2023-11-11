@@ -2,7 +2,7 @@ from rest_framework import serializers
 
 from book_relations.models import BookRelations
 
-from .models import Author, Book, Genre, Comment
+from .models import Author, Book, Comment, Genre
 
 
 class CommentSerializer(serializers.ModelSerializer):

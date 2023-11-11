@@ -59,6 +59,7 @@ INSTALLED_APPS = [
     "book_relations",
     "book_relations_api",
     "book_requests",
+    "book_requests_api",
     "chat",
     "chat_api",
     # other

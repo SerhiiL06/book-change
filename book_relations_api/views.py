@@ -1,13 +1,13 @@
-from book_relations.models import BookRelations
-from book_relations.serializers import (
-    BookRelationsSerializer,
-    CreateBookRelationSerializer,
-)
-from books.models import Book
 from http import HTTPStatus
-from rest_framework.views import APIView
-from rest_framework.response import Response
+
 from rest_framework import permissions
+from rest_framework.response import Response
+from rest_framework.views import APIView
+
+from book_relations.models import BookRelations
+from book_relations.serializers import (BookRelationsSerializer,
+                                        CreateBookRelationSerializer)
+from books.models import Book
 
 
 class BookRelationsAPIView(APIView):

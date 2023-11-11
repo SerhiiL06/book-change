@@ -3,15 +3,16 @@ from typing import Any
 from django.core.cache import cache
 from django.core.exceptions import PermissionDenied
 from django.db.models import Q
-from django.forms.models import BaseModelForm
-from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
+from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
-from django.views.generic import CreateView, DetailView, ListView, UpdateView, View
+from django.views.generic import (CreateView, DetailView, ListView, UpdateView,
+                                  View)
 from taggit.models import Tag
 
 from book_relations.logic import check_bookmark
 from book_relations.models import BookRelations
+from users.decorators import is_object_owner
 
 from .forms import CreateBookForm, PDFBookForm, UpdateBookForm
 from .models import Book, BookInPDF, Comment
@@ -57,6 +58,10 @@ class DetailBookView(DetailView):
         # tags
 
         context["tags"] = obj.tags.all()
+
+        # check object owner
+
+        context["is_owner"] = is_object_owner(self.request.user, obj.owner)
 
         return context
 
