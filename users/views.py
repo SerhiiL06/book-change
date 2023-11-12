@@ -7,20 +7,35 @@ from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseForbidden
 from django.shortcuts import HttpResponseRedirect, redirect, render
 from django.urls import reverse_lazy
-from django.views.generic import (CreateView, DetailView, FormView, ListView,
-                                  TemplateView, UpdateView)
+from django.views.generic import (
+    CreateView,
+    DetailView,
+    FormView,
+    ListView,
+    TemplateView,
+    UpdateView,
+)
 
 from book_relations.logic import get_user_rating
 
 from .decorators import is_following, is_object_owner
-from .forms import (EmailNewsLetterForm, LoginForm, MessageForm,
-                    OptionalUserInformationForm, ProfileForm, RegisterForm)
+from .forms import (
+    EmailNewsLetterForm,
+    LoginForm,
+    MessageForm,
+    OptionalUserInformationForm,
+    ProfileForm,
+    RegisterForm,
+)
 from .models import User, UserEmailNewsLetter, UserFollowing, UserProfile
 from .tasks import send_email_verification, send_message
 
 
 class RegisterView(CreateView):
-    """Registration user form"""
+    """
+    Registration user form and send email verification
+
+    """
 
     template_name = "users/register/register.html"
     model = User
@@ -134,13 +149,17 @@ def follow(request, user_id):
 
 
 class UserOptionsView(TemplateView):
-    """User optional page"""
+    """
+    User page with something options
+    """
 
     template_name = "users/user-options.html"
 
 
 class FollowersListView(ListView):
-    """List of user followers"""
+    """
+    List of user followers
+    """
 
     template_name = "users/tables/followers-list.html"
     model = UserFollowing
@@ -151,7 +170,9 @@ class FollowersListView(ListView):
 
 
 class MyFollowingView(ListView):
-    """Following user page"""
+    """
+    List of user subscriptions
+    """
 
     template_name = "users/tables/following-list.html"
     model = UserFollowing
@@ -162,7 +183,10 @@ class MyFollowingView(ListView):
 
 
 class SendMailView(FormView):
-    """Email send form"""
+    """
+    A form for sending an email to other users with a captcha
+
+    """
 
     form_class = MessageForm
 
@@ -189,7 +213,9 @@ class SendMailView(FormView):
 
 
 class EmailNewsLetterView(UpdateView):
-    """Newsletter page"""
+    """
+    User can change and set his newsletts settings
+    """
 
     template_name = "users/options/email-newsletter.html"
     model = UserEmailNewsLetter

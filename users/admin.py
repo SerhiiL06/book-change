@@ -2,10 +2,6 @@ from django.contrib import admin
 
 from .models import User, UserEmailNewsLetter, UserFollowing, UserProfile
 
-# @admin.action(description="Set active status")
-# def set_unactive(modeladmin, request, queryset):
-#     queryset.update(is_active=False)
-
 
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):

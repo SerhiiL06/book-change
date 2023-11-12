@@ -1,13 +1,15 @@
 from rest_framework import serializers
 from rest_framework.response import Response
 
+from books.models import Book
+
 from .models import BookRequest
 
 
-class BookRequestSerializer(serializers.Serializer):
-    book_id = serializers.IntegerField()
+class BookRequestListSerializer(serializers.Serializer):
+    id = serializers.IntegerField(read_only=True)
+    book_id = serializers.SerializerMethodField()
     request_from_user_id = serializers.IntegerField(read_only=True)
-    comment = serializers.CharField(max_length=100)
     status = serializers.CharField(default="send")
     created = serializers.SerializerMethodField(read_only=True)
 
@@ -22,3 +24,17 @@ class BookRequestSerializer(serializers.Serializer):
 
     def get_created(self, obj):
         return obj.created.date()
+
+    def get_book_id(self, obj):
+        book = Book.objects.get(id=obj.book_id)
+        return book.title
+
+
+class BookRequestDetailSerializer(serializers.ModelSerializer):
+    request_from_user = serializers.CharField(read_only=True)
+    created = serializers.DateTimeField(read_only=True)
+    status = serializers.CharField(read_only=True)
+
+    class Meta:
+        model = BookRequest
+        fields = ["book", "request_from_user", "created", "comment", "status"]

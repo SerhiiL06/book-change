@@ -9,12 +9,19 @@ from .models import User
 
 @shared_task()
 def send_email_verification(user_id):
+    """
+    Celery task for email sending after registration
+
+    """
     user = User.objects.get(pk=user_id)
     send_email(user)
 
 
 @shared_task()
 def send_message(subject, message, email):
+    """
+    Celery task for send email for another user
+    """
     send_mail(
         subject=subject,
         message=message,

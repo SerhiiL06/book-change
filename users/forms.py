@@ -5,6 +5,7 @@ from django import forms
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django_countries.fields import CountryField
 from phonenumber_field.formfields import PhoneNumberField
+from django.contrib.auth import authenticate, get_user_model
 
 from .models import User, UserEmailNewsLetter, UserProfile
 
