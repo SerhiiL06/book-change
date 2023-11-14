@@ -1,16 +1,36 @@
 from django.contrib import admin
+from books.inlines import BookInline
 
 from .models import User, UserEmailNewsLetter, UserFollowing, UserProfile
+from .inlines import UserFollowingInlines, NewsLetterSettingsInline
+from imagekit.admin import AdminThumbnail
 
 
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
-    list_display = ["email", "last_activity", "full_name"]
+    list_display = [
+        "email",
+        "is_active",
+        "full_name",
+    ]
+    list_display_links = ["email"]
 
-    list_display_links = ["full_name"]
+    fields = [
+        "email",
+        ("first_name", "last_name"),
+        "join_at",
+        "last_activity",
+        ("is_staff", "is_superuser"),
+        "is_active",
+        "groups",
+    ]
+
+    list_filter = ["is_active"]
+    search_fields = ["email", "first_name"]
+    ordering = ["email"]
     actions = ["set_active", "set_unactive"]
-    date_hierarchy = "join_at"
-    empty_value_display = "--"
+    readonly_fields = ["email", "last_activity", "join_at", "status"]
+    inlines = [BookInline, NewsLetterSettingsInline, UserFollowingInlines]
 
     @admin.action(description="Set active status")
     def set_active(self, request, queryset):
@@ -20,7 +40,7 @@ class UserAdmin(admin.ModelAdmin):
 
     @admin.action(description="Unset active status")
     def set_unactive(self, request, queryset):
-        updated = queryset.update(is_active=False)
+        queryset.update(is_active=False)
         self.message_user(request, f"You're update {queryset.count()} user")
 
 

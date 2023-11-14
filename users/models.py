@@ -1,11 +1,16 @@
 from datetime import timedelta
 
-from django.contrib.auth.models import (AbstractBaseUser, BaseUserManager,
-                                        PermissionsMixin)
+from django.contrib.auth.models import (
+    AbstractBaseUser,
+    BaseUserManager,
+    PermissionsMixin,
+)
 from django.db import models
 from django.utils import timezone
 from django_countries.fields import CountryField
 from phonenumber_field.modelfields import PhoneNumberField
+from imagekit.models import ImageSpecField
+from imagekit.processors import ResizeToFill
 
 
 class CustomUserManager(BaseUserManager):
@@ -49,6 +54,12 @@ class User(PermissionsMixin, AbstractBaseUser):
     about = models.TextField(null=True, blank=True, max_length=1000)
 
     image = models.ImageField(upload_to="user_img/", null=True, blank=True)
+    image_to_thumbnail = ImageSpecField(
+        source="image",
+        processors=[ResizeToFill(20, 10)],
+        format="JPEG",
+        options={"quality": 30},
+    )
 
     join_at = models.DateTimeField(auto_now_add=True)
     last_login = models.DateTimeField(auto_now=True)
@@ -98,6 +109,9 @@ class UserProfile(models.Model):
         clean_link = str(self.social_link).removeprefix("https://").removesuffix(".com")
         return clean_link
 
+    def __str__(self):
+        return f"Profile {self.user.full_name()} | {self.country}"
+
 
 class UserFollowing(models.Model):
     """Користувач на якого підписалися"""
@@ -122,3 +136,6 @@ class UserEmailNewsLetter(models.Model):
     sending_out_offers = models.BooleanField(default=False)
 
     news_mailer = models.BooleanField(default=False)
+
+    def __str__(self) -> str:
+        return f"email setting {self.user}"

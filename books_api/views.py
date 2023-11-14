@@ -5,10 +5,15 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from books.models import Author, Book, Comment, Genre
-from books.serializers import (AuthorListSerializer, BookDetailSerializer,
-                               BookListSerializer, CommentSerializer,
-                               CreateBookSerializer, GenreDetailSerializer,
-                               GenreSerializer)
+from books.serializers import (
+    AuthorListSerializer,
+    BookDetailSerializer,
+    BookListSerializer,
+    CommentSerializer,
+    CreateBookSerializer,
+    GenreDetailSerializer,
+    GenreSerializer,
+)
 
 
 class CommentAPIView(APIView):
@@ -123,7 +128,7 @@ class GenreDetailAPIView(APIView):
 
 
 class BookListAPIView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
+    # permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
         queryset = Book.objects.all()
