@@ -9,8 +9,6 @@ from django.db import models
 from django.utils import timezone
 from django_countries.fields import CountryField
 from phonenumber_field.modelfields import PhoneNumberField
-from imagekit.models import ImageSpecField
-from imagekit.processors import ResizeToFill
 
 
 class CustomUserManager(BaseUserManager):
@@ -54,12 +52,6 @@ class User(PermissionsMixin, AbstractBaseUser):
     about = models.TextField(null=True, blank=True, max_length=1000)
 
     image = models.ImageField(upload_to="user_img/", null=True, blank=True)
-    image_to_thumbnail = ImageSpecField(
-        source="image",
-        processors=[ResizeToFill(20, 10)],
-        format="JPEG",
-        options={"quality": 30},
-    )
 
     join_at = models.DateTimeField(auto_now_add=True)
     last_login = models.DateTimeField(auto_now=True)

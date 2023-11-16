@@ -3,8 +3,9 @@ from http import HTTPStatus
 from rest_framework import permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 
-from books.models import Author, Book, Comment, Genre
+from books.models import Author, Book, Genre
 from books.serializers import (
     AuthorListSerializer,
     BookDetailSerializer,
@@ -27,11 +28,10 @@ class CommentAPIView(APIView):
         return Response({"created": serializer.data})
 
 
-class AuthorListAPIView(APIView):
-    def get(self, request):
-        queryset = Author.objects.all()
-        serializer = AuthorListSerializer(queryset, many=True)
-        return Response({"author_list": serializer.data})
+class AuthorListAPIView(ListCreateAPIView):
+    queryset = Author.objects.all()
+    serializer_class = AuthorListSerializer
+    http_method_names = ["get", "post"]
 
     def post(self, request):
         new_author = AuthorListSerializer(data=request.data)
@@ -40,36 +40,13 @@ class AuthorListAPIView(APIView):
         return Response({"author create": new_author.data})
 
 
-class AuthorDetailAPIView(APIView):
+class AuthorDetailAPIView(RetrieveUpdateDestroyAPIView):
+    queryset = Author.objects.all()
+    serializer_class = AuthorListSerializer
+    lookup_field = "pk"
+
     author_doesnt_exists = ValueError("This author was dont exists")
     dont_have_permission = Response({"error": "you dont have permission"})
-
-    def get(self, request, author_id):
-        try:
-            author = Author.objects.get(id=author_id)
-        except Author.DoesNotExist:
-            raise self.author_doesnt_exists
-
-        serializer = AuthorListSerializer(author, many=False)
-
-        return Response({"author": serializer.data})
-
-    def patch(self, request, author_id):
-        try:
-            author = Author.objects.get(id=author_id)
-        except Author.DoesNotExist:
-            raise self.author_doesnt_exists
-
-        if request.user.is_staff:
-            serializer = AuthorListSerializer(instance=author, data=request.data)
-
-            serializer.is_valid(raise_exception=True)
-
-            serializer.save()
-
-            return Response({"update": serializer.data})
-
-        return self.dont_have_permission
 
     def delete(self, request, author_id):
         try:

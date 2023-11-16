@@ -3,7 +3,6 @@ from books.inlines import BookInline
 
 from .models import User, UserEmailNewsLetter, UserFollowing, UserProfile
 from .inlines import UserFollowingInlines, NewsLetterSettingsInline
-from imagekit.admin import AdminThumbnail
 
 
 @admin.register(User)

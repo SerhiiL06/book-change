@@ -5,14 +5,20 @@ from django_filters import rest_framework as filter
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework import permissions
+from rest_framework.generics import RetrieveUpdateDestroyAPIView, ListAPIView
+from .permissions import IsOwnerOrStaff
+
 
 from users.models import User, UserEmailNewsLetter, UserFollowing
-from users.serializers import (EmailSerializer, NewsLetterSerializer,
-                               UserDetailSerializer, UserFollowingSerializer,
-                               UserSerializer)
+from users.serializers import (
+    EmailSerializer,
+    NewsLetterSerializer,
+    UserDetailSerializer,
+    UserFollowingSerializer,
+    UserSerializer,
+)
 from users.tasks import send_message
-
-from .permissions import IsAuthenticatedAndOwner
 
 
 class UsersAPIView(APIView):
@@ -30,41 +36,45 @@ class UsersAPIView(APIView):
         return Response({"user_list": serializer.data})
 
 
-class DetailUserAPIView(APIView):
-    permission_classes = [IsAuthenticated, IsAuthenticatedAndOwner]
+class DetailUserAPIView(RetrieveUpdateDestroyAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserDetailSerializer
+    permission_classes = [permissions.IsAuthenticated]
 
-    def get(self, request, user_id):
-        try:
-            queryset = User.objects.get(id=user_id)
-        except:
-            return Response({"error": "user dont exist"})
+    # def patch(self, request, user_id):
+    #     user = User.objects.get(id=user_id)
+    #     if request.user == user or user.is_superuser:
+    #         user_data = UserDetailSerializer(data=request.data, instance=user)
+    #         user_data.is_valid(raise_exception=True)
+    #         user_data.save()
+    #         return Response({"well_done": "OK"})
+    #     return Response({"You dont have permission for this "})
 
-        serializer = UserDetailSerializer(queryset, many=False)
-        return Response({"user_list": serializer.data})
+    # def delete(self, request, user_id):
+    #     user = User.objects.get(id=user_id)
+    #     if request.user == user or request.user.is_superuser:
+    #         user.delete()
+    #         return Response({"delete": "object delete"})
+    #     return Response({"You dont have permission for this "})
 
-    def patch(self, request, user_id):
-        user = User.objects.get(id=user_id)
-        if request.user == user or user.is_superuser:
-            user_data = UserDetailSerializer(data=request.data, instance=user)
-            user_data.is_valid(raise_exception=True)
-            user_data.save()
-            return Response({"well_done": "OK"})
-        return Response({"You dont have permission for this "})
-
-    def delete(self, request, user_id):
-        user = User.objects.get(id=user_id)
-        if request.user == user or request.user.is_superuser:
-            user.delete()
-            return Response({"delete": "object delete"})
-        return Response({"You dont have permission for this "})
+    def get_permissions(self):
+        if self.request.method == "GET":
+            return super().get_permissions()
+        if self.request.method == "DELETE":
+            return [permissions.IsAdminUser()]
+        if self.request.method == "PATCH":
+            return [IsOwnerOrStaff()]
 
 
-class MyFollowersAPIView(APIView):
+class MyFollowersAPIView(ListAPIView):
     """Followers list"""
 
+    queryset = UserFollowing.objects.all()
+    serializer_class = UserFollowingSerializer
+
     def get(self, request):
-        queryset = UserFollowing.objects.filter(user_id=request.user)
-        serializer = UserFollowingSerializer(instance=queryset, many=True)
+        queryset = self.get_queryset().filter(user_id=request.user)
+        serializer = self.serializer_class(instance=queryset, many=True)
         return Response({"my_followers": serializer.data})
 
 
