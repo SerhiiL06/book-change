@@ -1,8 +1,8 @@
 from typing import Any
 
-from django.db.models.query import QuerySet
 from django.db.models.functions import Length
 from .inlines import CommentInline, BookPDFInline, BookInline
+from .filters import TextFilter
 from django.contrib import admin
 
 
@@ -18,27 +18,6 @@ class GenreAdmin(admin.ModelAdmin):
 @admin.register(Author)
 class AuthorAdmin(admin.ModelAdmin):
     pass
-
-
-class TextFilter(admin.SimpleListFilter):
-    title = "description length"
-    parameter_name = "text"
-
-    def lookups(self, request: Any, model_admin: Any) -> list[tuple[Any, str]]:
-        values = (("short", "Short text"), ("long", "Long text"))
-
-        return values
-
-    def queryset(self, request: Any, queryset: QuerySet[Any]) -> QuerySet[Any] | None:
-        if self.value() == "short":
-            return Book.objects.annotate(descr_len=Length("description")).filter(
-                descr_len__lt=600
-            )
-
-        if self.value() == "long":
-            return Book.objects.annotate(descr_len=Length("description")).filter(
-                descr_len__gte=600
-            )
 
 
 @admin.register(Book)

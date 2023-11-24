@@ -3,10 +3,13 @@ from http import HTTPStatus
 from rest_framework import permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.generics import RetrieveUpdateAPIView
 
 from book_relations.models import BookRelations
-from book_relations.serializers import (BookRelationsSerializer,
-                                        CreateBookRelationSerializer)
+from book_relations.serializers import (
+    BookRelationsSerializer,
+    CreateBookRelationSerializer,
+)
 from books.models import Book
 
 
@@ -47,8 +50,10 @@ class BookRelationsAPIView(APIView):
         return Response({"OK"})
 
 
-class BookRelationsDetailAPIView(APIView):
+class BookRelationsDetailAPIView(RetrieveUpdateAPIView):
     permission_classes = [permissions.IsAuthenticated]
+    queryset = BookRelations.objects.all()
+    serializer_class = BookRelationsSerializer
 
     def get(self, request, book_id):
         try:

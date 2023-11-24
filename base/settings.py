@@ -61,6 +61,7 @@ INSTALLED_APPS = [
     "book_requests_api",
     "chat",
     "chat_api",
+    "gallery",
     # other
     "phonenumber_field",
     "django_countries",

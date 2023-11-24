@@ -30,6 +30,8 @@ urlpatterns = [
     # chat apps
     path("chat/", include("chat.urls")),
     path("api-chat/", include("chat_api.urls")),
+    # gallery app
+    path("gallery/", include("gallery.urls")),
     #
     #
     # debug toolbar
