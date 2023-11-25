@@ -59,16 +59,16 @@
                                     <i class="fa fa-circle fa-stack-2x text-primary"></i>
                                     <i class="fa fa-thumbs-up fa-stack-1x fa-inverse"></i>
                                     </span>
-                                    <span class="stats-total">Likes total</span>
+                                    <span class="stats-total">{{object.likes}}</span>
                                  </div>
                               </div>
                               <div class="timeline-footer">
-                                 <a href="javascript:;" class="m-r-15 text-inverse-lighter"><i class="fa fa-thumbs-up fa-fw fa-lg m-r-3"></i> Like</a>
+                                 <a href="{% url "news:like" object.id %}" class="m-r-15 text-inverse-lighter" ><i class="fa fa-thumbs-up fa-fw fa-lg m-r-3" ></i> Like</a>
                                  <a href="javascript:;" class="m-r-15 text-inverse-lighter"><i class="fa fa-comments fa-fw fa-lg m-r-3"></i> Comment</a> 
                                  <a href="javascript:;" class="m-r-15 text-inverse-lighter"><i class="fa fa-share fa-fw fa-lg m-r-3"></i> Share</a>
                               </div>
                               <div class="timeline-comment-box">
-                                 <div class="user"><img src="https://bootdey.com/img/Content/avatar/avatar3.png"></div>
+                                 <div class="user"><img src="{{user.image.url}}"></div>
                                  <div class="input">
                                     <form action="">
                                        <div class="input-group">

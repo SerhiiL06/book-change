@@ -21,7 +21,12 @@
             <ul>
                 <li class="filter active" data-filter="all">All Items</li>
                 {% for tag in tags  %}
-                <li class="filter" data-filter=".{{tag}}">{{tag}}</li>
+              
+                <a href="{% url "gallery:gallery-with-tag" tag %}" value={{tag.tag_name}} >
+                <li class="filter" value={{tag.tag_name}} name="tag-name" data-filter=".{{tag}}">{{tag}}</li>
+                </a>
+
+                
                 {% endfor %}
              
             </ul>
@@ -75,5 +80,9 @@
 });	
 	 
 </script>
+
+
+
+
 
 {% endblock content %}

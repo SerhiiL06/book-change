@@ -10,7 +10,13 @@ class News(models.Model):
 
     publish = models.BooleanField(default=True)
 
-    views = models.PositiveIntegerField(default=0)
     likes = models.PositiveIntegerField(default=0)
 
     author = models.ForeignKey(User, on_delete=models.PROTECT)
+
+
+class Like(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="likes_news")
+    news = models.ForeignKey(News, on_delete=models.CASCADE, related_name="likes_user")
+
+    date = models.DateTimeField(auto_now_add=True)

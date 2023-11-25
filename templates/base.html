@@ -65,6 +65,7 @@
           <ul class="dropdown-menu">
             <li><a class="dropdown-item" href="{% url "users:another-user" user.id%}">Profile</a></li>
             <li><a class="dropdown-item" href="{% url "users:options" %}">Options</a></li>
+            <li><a class="dropdown-item" href="{% url "gallery:gallery" %}">Gallery</a></li>
             {% if user.is_staff %}
             <li><a class="dropdown-item" href="#">Admin page</a></li>
             {% endif %}
