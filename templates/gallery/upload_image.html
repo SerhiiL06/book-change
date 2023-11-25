@@ -1,0 +1,65 @@
+{% include "base.html" %}
+
+
+{% load crispy_forms_tags %}
+
+{% load socialaccount %}
+
+
+{% block content %}
+ 
+ 
+ 
+
+            
+                 
+        <div class="container bg-white shadow-md p-5 form-layout">
+            <div class-"text-align: center;">         
+
+
+            <hr>
+            <br>
+
+    <form method="POST" autocomplete="off" enctype='multipart/form-data'>
+
+                {% csrf_token %}
+
+
+
+                {{form.image|as_crispy_field}}
+
+                <br> <br>
+
+
+                {{form.tags|as_crispy_field}}
+
+                <br> <br>
+
+                
+                <button type="submit" class="btn btn-primary navbar-btn text-white w-100 p-2"> &nbsp; Upload </button>
+
+                <br> <br>
+
+              
+
+                <div class="text-center">
+
+              
+
+
+    </form>
+
+
+            
+
+        </div>
+
+    </div>   
+
+
+    
+
+    <br> <br>
+
+
+{% endblock %}    

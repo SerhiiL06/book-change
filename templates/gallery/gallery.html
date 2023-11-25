@@ -10,12 +10,7 @@
         <!-- section-heading start -->
         <div class="row">
             <div class="col-md-12">
-                <div class="section-heading">
-                    <h2>CHECK OUR AWESOME <strong>PORTFOLIO</strong></h2>
-                    <p>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin non odio id nibh ultrices blandit. Maecenas tincidunt, est sit amet pretium hendrerit, felis nibh bibendum arcu, nec tincidunt leo lorem ut lorem. Sed facilisis interdum faucibus. Cras tellus
-                        leo, venenatis nec tortor in, porta maximus tellus. Etiam eget libero vestibulum</p>
-                </div>
+              
             </div>
         </div>
         <!-- section-heading end -->
@@ -25,123 +20,29 @@
         <div class="awesome-portfolio-menu">
             <ul>
                 <li class="filter active" data-filter="all">All Items</li>
-                <li class="filter" data-filter=".design">Design</li>
-                <li class="filter" data-filter=".flat">Flat Design</li>
-                <li class="filter" data-filter=".illustration">illustration</li>
-                <li class="filter" data-filter=".branding">Branding</li>
+                {% for tag in tags  %}
+                <li class="filter" data-filter=".{{tag}}">{{tag}}</li>
+                {% endfor %}
+             
             </ul>
         </div>
         <div class="awesome-portfolio-content" id="MixItUp68DC04">
+            {% for object in object_list %}
             <!-- single-awesome-portfolio start -->
             <div class="single-awesome-portfolio mix all flat illustration" style="display: inline-block;">
                 <a href="#">
-                    <div class="awesome-img"><img src="https://www.bootdey.com/image/400x300/FF0000/000000" alt=""></div>
+                    <div class="awesome-img"><img src="{{object.image.url}}" alt=""></div>
                     <div class="awesome-info">
-                        <h3>Portfolio Name</h3>
-                        <p>Design</p>
+                        <h3>{{object.owner}}</h3>
+                        <p>{{object.owner.about}}</p>
                     </div>
                 </a>
             </div>
             <!-- single-awesome-portfolio end -->
-            <!-- single-awesome-portfolio start -->
-            <div class="single-awesome-portfolio mix all design branding" style="display: inline-block;">
-                <a href="#">
-                    <div class="awesome-img"><img src="https://www.bootdey.com/image/400x300/1E90FF/000000" alt=""></div>
-                    <div class="awesome-info">
-                        <h3>Portfolio Name</h3>
-                        <p>Design</p>
-                    </div>
-                </a>
-            </div>
-            <!-- single-awesome-portfolio end -->
-            <!-- single-awesome-portfolio start -->
-            <div class="single-awesome-portfolio mix all flat illustration" style="display: inline-block;">
-                <a href="#">
-                    <div class="awesome-img"><img src="https://www.bootdey.com/image/400x300/" alt=""></div>
-                    <div class="awesome-info">
-                        <h3>Portfolio Name</h3>
-                        <p>Design</p>
-                    </div>
-                </a>
-            </div>
-            <!-- single-awesome-portfolio end -->
-            <!-- single-awesome-portfolio start -->
-            <div class="single-awesome-portfolio mix all design branding" style="display: inline-block;">
-                <a href="#">
-                    <div class="awesome-img"><img src="https://www.bootdey.com/image/400x300/FF8C00/000000" alt=""></div>
-                    <div class="awesome-info">
-                        <h3>Portfolio Name</h3>
-                        <p>Design</p>
-                    </div>
-                </a>
-            </div>
-            <!-- single-awesome-portfolio end -->
-            <!-- single-awesome-portfolio start -->
-            <div class="single-awesome-portfolio mix all flat design illustration" style="display: inline-block;">
-                <a href="#">
-                    <div class="awesome-img"><img src="https://www.bootdey.com/image/400x300/9932CC/000000" alt=""></div>
-                    <div class="awesome-info">
-                        <h3>Portfolio Name</h3>
-                        <p>Design</p>
-                    </div>
-                </a>
-            </div>
-            <!-- single-awesome-portfolio end -->
-            <!-- single-awesome-portfolio start -->
-            <div class="single-awesome-portfolio mix all design branding " style="display: inline-block;">
-                <a href="#">
-                    <div class="awesome-img"><img src="https://www.bootdey.com/image/400x300/008B8B/000000" alt=""></div>
-                    <div class="awesome-info">
-                        <h3>Portfolio Name</h3>
-                        <p>Design</p>
-                    </div>
-                </a>
-            </div>
-            <!-- single-awesome-portfolio end -->
-            <!-- single-awesome-portfolio start -->
-            <div class="single-awesome-portfolio mix all design illustration" style="display: inline-block;">
-                <a href="#">
-                    <div class="awesome-img"><img src="https://www.bootdey.com/image/400x300/" alt=""></div>
-                    <div class="awesome-info">
-                        <h3>Portfolio Name</h3>
-                        <p>Design</p>
-                    </div>
-                </a>
-            </div>
-            <!-- single-awesome-portfolio end -->
-            <!-- single-awesome-portfolio start -->
-            <div class="single-awesome-portfolio mix all flat illustration branding" style="display: inline-block;">
-                <a href="#">
-                    <div class="awesome-img"><img src="https://www.bootdey.com/image/400x300/6495ED/000000" alt=""></div>
-                    <div class="awesome-info">
-                        <h3>Portfolio Name</h3>
-                        <p>Design</p>
-                    </div>
-                </a>
-            </div>
-            <!-- single-awesome-portfolio end -->
-            <!-- single-awesome-portfolio start -->
-            <div class="single-awesome-portfolio mix all design branding" style="display: inline-block;">
-                <a href="#">
-                    <div class="awesome-img"><img src="https://www.bootdey.com/image/400x300/FF69B4/000000" alt=""></div>
-                    <div class="awesome-info">
-                        <h3>Portfolio Name</h3>
-                        <p>Design</p>
-                    </div>
-                </a>
-            </div>
-            <!-- single-awesome-portfolio end -->
-            <!-- single-awesome-portfolio start -->
-            <div class="single-awesome-portfolio mix all flat illustration" style="display: inline-block;">
-                <a href="#">
-                    <div class="awesome-img"><img src="https://www.bootdey.com/image/400x300/7B68EE/000000" alt=""></div>
-                    <div class="awesome-info">
-                        <h3>Portfolio Name</h3>
-                        <p>Design</p>
-                    </div>
-                </a>
-            </div>
-            <!-- single-awesome-portfolio end -->
+            {% endfor %}
+
+
+
         </div>
     </div>
     <!-- awesome-portfolio end -->

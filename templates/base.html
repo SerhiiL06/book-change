@@ -30,6 +30,7 @@
           <ul class="dropdown-menu">
             <li><a class="dropdown-item" href="{% url "books:create-book" %}">Add book</a></li>
             <li><a class="dropdown-item" href="{% url "books:my-books" %}">My books</a></li>
+            <li><a class="dropdown-item" href="{% url "book_request:my-requests"%}">My request ({{total_requests}})</a></li>
             <li><a class="dropdown-item" href="{% url "book_relations:bookmark-list" %}">Bookmarks</a></li>
           </ul>
         </li>
@@ -37,10 +38,12 @@
         
         
       </ul>
+     
         <li class="nav-item">
-          <a class="nav-link active" href="{% url "book_request:my-requests"%}">My request ({{total_requests}})</a>
+          <a class="nav-link active" href="#">News (Comming soon)</a>
         </li>
       </ul>
+
       {% endif %}
       <!-- Пошук по центру -->
       <form class="d-flex justify-content-center" method="POST" action="{% url "books:search" %}">
