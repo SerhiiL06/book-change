@@ -32,6 +32,8 @@ urlpatterns = [
     path("api-chat/", include("chat_api.urls")),
     # gallery app
     path("gallery/", include("gallery.urls")),
+    # news app
+    path("news/", include("news.urls")),
     #
     #
     # debug toolbar

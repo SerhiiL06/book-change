@@ -62,6 +62,7 @@ INSTALLED_APPS = [
     "chat",
     "chat_api",
     "gallery",
+    "news",
     # other
     "phonenumber_field",
     "django_countries",
