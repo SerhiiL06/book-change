@@ -51,18 +51,18 @@ INSTALLED_APPS = [
     "crispy_forms",
     "crispy_bootstrap5",
     # my_apps
-    "books",
-    "books_api",
-    "users",
-    "users_api",
-    "book_relations",
-    "book_relations_api",
-    "book_requests",
-    "book_requests_api",
-    "chat",
-    "chat_api",
-    "gallery",
-    "news",
+    "src.applications.books",
+    "src.rest.books_api",
+    "src.applications.users",
+    "src.rest.users_api",
+    "src.applications.book_relations",
+    "src.rest.book_relations_api",
+    "src.applications.book_requests",
+    "src.rest.book_requests_api",
+    "src.applications.chat",
+    "src.rest.chat_api",
+    "src.applications.gallery",
+    "src.applications.news",
     # other
     "phonenumber_field",
     "django_countries",
@@ -85,7 +85,7 @@ MIDDLEWARE = [
     # Debug toolbar
     "debug_toolbar.middleware.DebugToolbarMiddleware",
     # user activity
-    "users.middleware.UserActivityMiddleware",
+    "src.applications.users.middleware.UserActivityMiddleware",
     # allauth
     "allauth.account.middleware.AccountMiddleware",
 ]
@@ -109,7 +109,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
-                "book_requests.context_processors.total_requests",
+                "src.applications.book_requests.context_processors.total_requests",
             ],
         },
     },
