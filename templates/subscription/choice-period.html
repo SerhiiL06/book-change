@@ -1,0 +1,67 @@
+{% include "base.html" %}
+
+
+{% load crispy_forms_tags %}
+
+
+
+
+
+{% load static %}
+
+{% block css %}  <link rel="stylesheet" href="{%static 'css/choice-plan.css'%}"> {% endblock css %}
+{% block content %}
+ 
+ 
+ 
+
+            
+                 
+      <div class="container">
+<div class="row gutters">       
+
+
+
+            <hr>
+            <br>
+
+            <p>Be careful, you have chosen a {{select_plan}}</p>
+            <form method="POST" autocomplete="off" >
+
+                {% csrf_token %}
+
+
+
+                {{form.plan_period|as_crispy_field}}
+
+                <br> <br>
+
+
+                
+                <button type="submit" class="btn btn-primary navbar-btn text-white w-100 p-2"> &nbsp; Buy subscription </button>
+
+                <br> <br>
+
+              
+
+                <div class="text-center">
+
+              
+
+
+    </form>
+
+
+            
+
+        </div>
+
+    </div>   
+
+
+    
+
+    <br> <br>
+
+
+{% endblock %}    

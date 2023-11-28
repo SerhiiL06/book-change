@@ -63,6 +63,7 @@ INSTALLED_APPS = [
     "src.rest.chat_api",
     "src.applications.gallery",
     "src.applications.news",
+    "src.applications.subscriptions",
     # other
     "phonenumber_field",
     "django_countries",
@@ -328,3 +329,10 @@ CELERY_broker_connection_retry_on_startup = True
 
 broker_connection_retry_on_startup = False
 # Crontab
+
+
+# Stripe
+
+STRIPE_SECRET_KEY = env("STRIPE_SECRET_KEY")
+
+STRIPE_VERSION = env("STRIPE_VERSION")
