@@ -2,23 +2,22 @@ from http import HTTPStatus
 
 from django.conf import settings
 from django_filters import rest_framework as filter
+from rest_framework import permissions
+from rest_framework.generics import ListAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework import permissions
-from rest_framework.generics import RetrieveUpdateDestroyAPIView, ListAPIView
-from .permissions import IsOwnerOrStaff
 
-
-from src.applications.users.models import User, UserEmailNewsLetter, UserFollowing
-from src.applications.users.serializers import (
-    EmailSerializer,
-    NewsLetterSerializer,
-    UserDetailSerializer,
-    UserFollowingSerializer,
-    UserSerializer,
-)
+from src.applications.users.models import (User, UserEmailNewsLetter,
+                                           UserFollowing)
+from src.applications.users.serializers import (EmailSerializer,
+                                                NewsLetterSerializer,
+                                                UserDetailSerializer,
+                                                UserFollowingSerializer,
+                                                UserSerializer)
 from src.applications.users.tasks import send_message
+
+from .permissions import IsOwnerOrStaff
 
 
 class UsersAPIView(APIView):

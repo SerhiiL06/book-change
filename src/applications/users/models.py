@@ -1,10 +1,7 @@
 from datetime import timedelta
 
-from django.contrib.auth.models import (
-    AbstractBaseUser,
-    BaseUserManager,
-    PermissionsMixin,
-)
+from django.contrib.auth.models import (AbstractBaseUser, BaseUserManager,
+                                        PermissionsMixin)
 from django.db import models
 from django.utils import timezone
 from django_countries.fields import CountryField
@@ -85,6 +82,13 @@ class User(PermissionsMixin, AbstractBaseUser):
             return False
         else:
             return True
+
+    def has_subscription(self):
+        from src.applications.subscriptions.models import Subscription
+
+        result = Subscription.objects.filter(user=self, complete=True).exists()
+
+        return result
 
     def __str__(self) -> str:
         return self.full_name()

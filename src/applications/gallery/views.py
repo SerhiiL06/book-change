@@ -1,10 +1,11 @@
 from typing import Any
+
 from django.db.models.query import QuerySet
 from django.urls import reverse_lazy
-from django.views.generic import ListView, CreateView
-from .models import Gallery, ImageTag
+from django.views.generic import CreateView, ListView
 
 from .forms import UploadImageForm
+from .models import Gallery, ImageTag
 
 
 class GalleryView(ListView):

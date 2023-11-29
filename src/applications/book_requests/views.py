@@ -8,7 +8,8 @@ from src.applications.books.models import Book
 
 from .forms import BookRequestForm
 from .models import BookRequest, HistoryRequests
-from .tasks import send_email_about_success_request, send_notification_about_request
+from .tasks import (send_email_about_success_request,
+                    send_notification_about_request)
 
 
 @login_required()

@@ -1,21 +1,21 @@
 from http import HTTPStatus
 
 from rest_framework import permissions
+from rest_framework.generics import (ListCreateAPIView,
+                                     RetrieveUpdateDestroyAPIView)
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
-from .mixins import CustomViewsSet
 
 from src.applications.books.models import Author, Book, Genre
-from src.applications.books.serializers import (
-    AuthorListSerializer,
-    BookDetailSerializer,
-    BookListSerializer,
-    CommentSerializer,
-    CreateBookSerializer,
-    GenreDetailSerializer,
-    GenreSerializer,
-)
+from src.applications.books.serializers import (AuthorListSerializer,
+                                                BookDetailSerializer,
+                                                BookListSerializer,
+                                                CommentSerializer,
+                                                CreateBookSerializer,
+                                                GenreDetailSerializer,
+                                                GenreSerializer)
+
+from .mixins import CustomViewsSet
 
 
 class CommentAPIView(APIView):

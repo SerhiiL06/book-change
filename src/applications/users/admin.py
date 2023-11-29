@@ -1,8 +1,9 @@
 from django.contrib import admin
+
 from src.applications.books.inlines import BookInline
 
+from .inlines import NewsLetterSettingsInline, UserFollowingInlines
 from .models import User, UserEmailNewsLetter, UserFollowing, UserProfile
-from .inlines import UserFollowingInlines, NewsLetterSettingsInline
 
 
 @admin.register(User)

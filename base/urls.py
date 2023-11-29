@@ -4,7 +4,6 @@ from django.contrib import admin
 from django.urls import include, path, re_path
 from django_email_verification import urls as email_urls
 
-
 app_pattern = "src.applications."
 rest_pattern = "src.rest."
 

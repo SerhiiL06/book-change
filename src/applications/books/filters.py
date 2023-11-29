@@ -1,8 +1,10 @@
-from django.contrib import admin
-from django.db.models.functions import Length
-from django.db.models import Avg
-from .models import Book
 from typing import Any
+
+from django.contrib import admin
+from django.db.models import Avg
+from django.db.models.functions import Length
+
+from .models import Book
 
 
 class TextFilter(admin.SimpleListFilter):

@@ -1,5 +1,5 @@
+from django.contrib.auth import get_user_model
 from django.db import models
-from src.applications.users.models import User
 
 
 class BillingPlan(models.Model):
@@ -15,9 +15,14 @@ class BillingPlan(models.Model):
 
 
 class Subscription(models.Model):
+    from src.applications.users.models import User
+
     user = models.OneToOneField(
         User, on_delete=models.CASCADE, related_name="subscription"
     )
-    plan = models.OneToOneField(BillingPlan, on_delete=models.CASCADE)
+
+    plan = models.ForeignKey(BillingPlan, on_delete=models.CASCADE)
     start_date = models.DateField(auto_now_add=True)
     expires_date = models.DateField()
+
+    complete = models.BooleanField(default=False)

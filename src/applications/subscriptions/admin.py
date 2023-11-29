@@ -1,6 +1,6 @@
 from django.contrib import admin
-from .models import BillingPlan, Subscription
 
+from .models import BillingPlan, Subscription
 
 admin.site.register(BillingPlan)
 

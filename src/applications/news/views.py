@@ -1,10 +1,11 @@
 from typing import Any
+
 from django.db.models.query import QuerySet
-from django.shortcuts import render
+from django.shortcuts import HttpResponseRedirect, redirect, render
 from django.urls import Resolver404
-from django.shortcuts import redirect, HttpResponseRedirect
-from django.views.generic import View, ListView
-from .models import News, Like
+from django.views.generic import ListView, View
+
+from .models import Like, News
 
 
 class NewsListView(ListView):

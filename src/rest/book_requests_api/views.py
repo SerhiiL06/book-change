@@ -5,13 +5,9 @@ from rest_framework.views import APIView
 
 from src.applications.book_requests.models import BookRequest
 from src.applications.book_requests.serializers import (
-    BookRequestDetailSerializer,
-    BookRequestListSerializer,
-)
+    BookRequestDetailSerializer, BookRequestListSerializer)
 from src.applications.book_requests.tasks import (
-    send_email_about_success_request,
-    send_notification_about_request,
-)
+    send_email_about_success_request, send_notification_about_request)
 from src.applications.books.models import Book
 from src.applications.users.decorators import is_object_owner
 

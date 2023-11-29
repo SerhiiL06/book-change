@@ -1,11 +1,10 @@
 from typing import Any
 
-from django.db.models.functions import Length
-from .inlines import CommentInline, BookPDFInline, BookInline
-from .filters import TextFilter
 from django.contrib import admin
+from django.db.models.functions import Length
 
-
+from .filters import TextFilter
+from .inlines import BookInline, BookPDFInline, CommentInline
 from .models import Author, Book, BookInPDF, Comment, Genre
 
 

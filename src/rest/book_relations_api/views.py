@@ -1,15 +1,13 @@
 from http import HTTPStatus
 
 from rest_framework import permissions
+from rest_framework.generics import RetrieveUpdateAPIView
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.generics import RetrieveUpdateAPIView
 
 from src.applications.book_relations.models import BookRelations
 from src.applications.book_relations.serializers import (
-    BookRelationsSerializer,
-    CreateBookRelationSerializer,
-)
+    BookRelationsSerializer, CreateBookRelationSerializer)
 from src.applications.books.models import Book
 
 

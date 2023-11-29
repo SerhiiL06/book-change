@@ -22,8 +22,11 @@
 				<li {% if not plan.title == 'Gold Plan' %} class="text-muted" {% endif %}>24/7 Tech Support</li>
 			</ul>
 			<div class="pricing-footer">
-				<a href="{% url "subscription:period" plan.title %}" class="btn btn-primary btn-lg">Select Plan</a>
-			</div>
+				<a href="{% url "subscription:period" plan.title %}">
+    <button type="button" class="btn btn-primary btn-lg" {% if user.has_subscription %} disabled{% endif %} >Select Plan</button>
+	</a>
+</div>
+
 		</div>
 	</div>
 	{% endfor %}

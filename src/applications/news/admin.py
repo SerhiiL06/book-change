@@ -1,5 +1,6 @@
 from django.contrib import admin
-from .models import News, Like
+
+from .models import Like, News
 
 admin.site.register(News)
 

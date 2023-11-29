@@ -1,6 +1,8 @@
 from typing import Any
+
 from django import forms
-from .models import ImageTag, Gallery
+
+from .models import Gallery, ImageTag
 
 
 class UploadImageForm(forms.ModelForm):

@@ -1,5 +1,6 @@
-from .models import Comment, BookInPDF, Book
 from django.contrib import admin
+
+from .models import Book, BookInPDF, Comment
 
 
 class CommentInline(admin.TabularInline):
