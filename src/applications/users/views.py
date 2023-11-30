@@ -6,15 +6,27 @@ from django.contrib.auth.views import LoginView
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseForbidden
 from django.shortcuts import HttpResponseRedirect, redirect, render
-from django.urls import reverse_lazy
-from django.views.generic import (CreateView, DetailView, FormView, ListView,
-                                  TemplateView, UpdateView)
+from django.urls import reverse_lazy, reverse
+from django.views.generic import (
+    CreateView,
+    DetailView,
+    FormView,
+    ListView,
+    TemplateView,
+    UpdateView,
+)
 
 from src.applications.book_relations.logic import get_user_rating
 
 from .decorators import is_following, is_object_owner
-from .forms import (EmailNewsLetterForm, LoginForm, MessageForm,
-                    OptionalUserInformationForm, ProfileForm, RegisterForm)
+from .forms import (
+    EmailNewsLetterForm,
+    LoginForm,
+    MessageForm,
+    OptionalUserInformationForm,
+    ProfileForm,
+    RegisterForm,
+)
 from .models import User, UserEmailNewsLetter, UserFollowing, UserProfile
 from .tasks import send_email_verification, send_message
 
@@ -38,7 +50,7 @@ class RegisterView(CreateView):
             # Send email verification for user
             send_email_verification.delay(form.instance.pk)
             return redirect("users:email-verification-sent")
-        return HttpResponseRedirect(request.META["HTTP_REFERER"])
+        return HttpResponseRedirect(reverse("users:register"))
 
 
 class UserLoginView(LoginView):
@@ -50,8 +62,6 @@ class UserLoginView(LoginView):
     success_url = reverse_lazy("books:index")
 
     def post(self, request):
-        form = LoginForm(request.POST)
-
         email = request.POST.get("email")
         password = request.POST.get("password")
 
@@ -61,7 +71,7 @@ class UserLoginView(LoginView):
             login(request, user)
             return redirect("books:index")
 
-        return HttpResponseRedirect(request.META["HTTP_REFERER"])
+        return HttpResponseRedirect(reverse("users:login"))
 
 
 class UserUpdateView(UpdateView):
@@ -77,7 +87,7 @@ class UserUpdateView(UpdateView):
         return self.request.user
 
     def get(self, request, *args, **kwargs):
-        profile, create = UserProfile.objects.get_or_create(user=request.user)
+        profile, _ = UserProfile.objects.get_or_create(user=request.user)
         form = ProfileForm(instance=request.user)
         profile_form = OptionalUserInformationForm(instance=profile)
         context = {"form": form, "profile_form": profile_form}
