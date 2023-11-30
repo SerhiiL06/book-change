@@ -64,6 +64,7 @@ INSTALLED_APPS = [
     "src.applications.gallery",
     "src.applications.news",
     "src.applications.subscriptions",
+    "src.rest.subscriptions_api",
     # other
     "phonenumber_field",
     "django_countries",

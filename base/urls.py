@@ -39,6 +39,7 @@ urlpatterns = [
     path("news/", include(f"{app_pattern}news.urls")),
     #
     path("subscriptions/", include(f"{app_pattern}subscriptions.urls")),
+    path("api-subscriptions/", include(f"{rest_pattern}subscriptions_api.urls")),
     #
     # debug toolbar
     path("__debug__/", include("debug_toolbar.urls")),

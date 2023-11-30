@@ -41,7 +41,7 @@ class Book(models.Model):
         blank=True,
     )
     genre = models.ForeignKey(
-        Genre, on_delete=models.PROTECT, null=True, related_name="books"
+        Genre, on_delete=models.PROTECT, null=True, related_name="genre_books"
     )
     author = models.ForeignKey(Author, on_delete=models.CASCADE, related_name="books")
     owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name="my_books")

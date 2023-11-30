@@ -4,15 +4,15 @@ from typing import Any
 import stripe
 from django.conf import settings
 from django.contrib import messages
-from django.shortcuts import (HttpResponseRedirect, get_object_or_404,
-                              redirect, render)
+from django.shortcuts import HttpResponseRedirect, get_object_or_404, redirect, render
 from django.urls import reverse
-from django.views.generic import FormView, ListView, TemplateView, View
+from django.views.generic import FormView, ListView, View
 
-from src.applications.users.models import User
+from .tasks import send_email_about_payment
 
 from .forms import ChoicePeriodForm
 from .models import BillingPlan, Subscription
+from .logic import get_stripe_session, create_stripe_session
 from .utils import StripeItems
 
 stripe.api_version = settings.STRIPE_VERSION
@@ -54,29 +54,15 @@ class ChoicePeriodView(FormView):
 
         end = start + timedelta(days=period)
 
-        new = Subscription(
+        Subscription.objects.create(
             user=current_user, plan=plan, start_date=start, expires_date=end
         )
 
-        items = StripeItems()
+        item = plan.id
 
-        item = title_plan.split()[0]
-
-        session = stripe.checkout.Session.create(
-            success_url=request.build_absolute_uri(reverse("subscription:success")),
-            cancel_url=request.build_absolute_uri(reverse("subscription:cancel")),
-            mode="subscription",
-            line_items=[
-                {
-                    "price": items.ITEMS.get(item),
-                    "quantity": int(request.POST["plan_period"]),
-                },
-            ],
-        )
+        session = create_stripe_session(request, item)
 
         self.request.session["stripe_key"] = session.id
-
-        new.save()
 
         return redirect(session.url)
 
@@ -86,16 +72,13 @@ class SuccessCheckout(View):
 
     def get(self, request, *args, **kwargs):
         stripe_id = self.request.session.get("stripe_key")
-        current_session = stripe.checkout.Session.retrieve(id=stripe_id)
 
-        user_email = current_session.customer_details.email
+        subscription, session = get_stripe_session(stripe_id)
 
-        user = User.objects.get(email=user_email)
-
-        subscription = Subscription.objects.filter(user=user).last()
-
-        if current_session.status == "complete":
+        if session.status == "complete":
             subscription.complete = True
+
+            send_email_about_payment.delay(session)
 
             subscription.save()
 
