@@ -18,13 +18,10 @@ class BookRelationsSerializer(serializers.ModelSerializer):
         return obj.user.full_name()
 
 
-class CreateBookRelationSerializer(serializers.Serializer):
+class CreateBookRelationSerializer(serializers.ModelSerializer):
     book_id = serializers.IntegerField()
     bookmark = serializers.BooleanField(required=False)
     rating = serializers.IntegerField(required=False)
-
-    def create(self, validated_data):
-        return BookRelations.objects.create(**validated_data)
 
     def update(self, instance, validated_data):
         if "bookmark" in validated_data:

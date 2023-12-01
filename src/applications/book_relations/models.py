@@ -2,21 +2,7 @@ from django.db import models
 
 from src.applications.books.models import Book
 from src.applications.users.models import User
-
-
-class BookRelationsManager(models.Manager):
-    def get_queryset(self):
-        queryset = super().get_queryset()
-        queryset.annotate()
-        return queryset.filter(models.Q(bookmark=True) | models.Q(rating__gt=0))
-
-    def get_rating(self, book):
-        rating = (
-            self.get_queryset()
-            .filter(book=book)
-            .aggregate(avg_rating=models.Avg("rating"))["avg_rating"]
-        )
-        return rating if rating else 0
+from .managers import BookRelationsManager
 
 
 class BookRelations(models.Model):
@@ -44,3 +30,6 @@ class BookRelations(models.Model):
 
         else:
             return f"{self.user.first_name} left a rating {self.rating}"
+
+    class Meta:
+        verbose_name_plural = "Book relations"

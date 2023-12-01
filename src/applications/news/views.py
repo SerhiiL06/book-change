@@ -1,8 +1,7 @@
 from typing import Any
 
 from django.db.models.query import QuerySet
-from django.shortcuts import HttpResponseRedirect, redirect, render
-from django.urls import Resolver404
+from django.shortcuts import HttpResponseRedirect, redirect, get_object_or_404
 from django.views.generic import ListView, View
 
 from .models import Like, News
@@ -23,27 +22,17 @@ class LikeView(View):
         return redirect("news:news-list")
 
     def get(self, request, news_id):
-        try:
-            news = News.objects.get(id=news_id)
-        except News.DoesNotExist:
-            raise Resolver404()
+        news = get_object_or_404(News, id=news_id)
 
-        check_like = Like.objects.filter(user=request.user, news=news)
+        check_like, create = Like.objects.get_or_create(user=request.user, news=news)
 
-        if not check_like.first():
-            like = Like(news=news, user=request.user)
-
-            like.save()
-
+        if create:
             news.likes += 1
 
-            news.save()
+        else:
+            check_like.delete()
 
-            return HttpResponseRedirect(request.META["HTTP_REFERER"])
-
-        check_like.first().delete()
-
-        news.likes -= 1
+            news.likes -= 1
 
         news.save()
 

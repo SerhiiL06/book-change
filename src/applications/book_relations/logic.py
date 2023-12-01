@@ -4,14 +4,12 @@ from .models import BookRelations
 
 
 def check_bookmark(user, books):
-    if not user.is_authenticated:
-        return False
-    for book in list(books):
-        relation = BookRelations.objects.filter(user=user, book=book)
-        if not relation.first():
-            return False
-        else:
-            return relation.first().bookmark
+    if user.is_authenticated:
+        for book in list(books):
+            relation = BookRelations.objects.filter(user=user, book=book).first()
+            if relation:
+                return relation.bookmark
+    return False
 
 
 def get_user_rating(user):

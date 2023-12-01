@@ -29,7 +29,7 @@ class Author(models.Model):
 
 
 class Book(models.Model):
-    title = models.CharField(max_length=250)
+    title = models.CharField(max_length=250, unique=True)
     slug = models.SlugField(default="")
     description = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)

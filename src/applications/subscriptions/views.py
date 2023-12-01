@@ -13,7 +13,7 @@ from .tasks import send_email_about_payment
 from .forms import ChoicePeriodForm
 from .models import BillingPlan, Subscription
 from .logic import get_stripe_session, create_stripe_session
-from .utils import StripeItems
+
 
 stripe.api_version = settings.STRIPE_VERSION
 stripe.api_key = settings.STRIPE_SECRET_KEY

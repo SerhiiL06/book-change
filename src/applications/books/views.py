@@ -6,9 +6,7 @@ from django.db.models import Q
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
-from django.views.generic import (CreateView, DetailView, ListView, UpdateView,
-                                  View)
-from taggit.models import Tag
+from django.views.generic import CreateView, DetailView, ListView, UpdateView, View
 
 from src.applications.book_relations.logic import check_bookmark
 from src.applications.book_relations.models import BookRelations
@@ -27,9 +25,6 @@ class IndexView(ListView):
         return super().get_queryset().select_related("owner", "genre")
 
     def get_context_data(self, **kwargs):
-        print(self.request.META)
-
-        print(self.request.META.get("HTTP_X_FORWARDED_FOR", "").split(",")[-1].strip())
         context = super().get_context_data(**kwargs)
         context["check_bookmark"] = check_bookmark(
             user=self.request.user, books=self.get_queryset()
