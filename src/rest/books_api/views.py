@@ -1,77 +1,77 @@
 from http import HTTPStatus
 
 from rest_framework import permissions
-from rest_framework.generics import (ListCreateAPIView,
-                                     RetrieveUpdateDestroyAPIView)
+from django_filters import rest_framework as filter
 from rest_framework.response import Response
 from rest_framework.views import APIView
-
+from rest_framework import viewsets
+from . import paginators
 from src.applications.books.models import Author, Book, Genre
-from src.applications.books.serializers import (AuthorListSerializer,
-                                                BookDetailSerializer,
-                                                BookListSerializer,
-                                                CommentSerializer,
-                                                CreateBookSerializer,
-                                                GenreDetailSerializer,
-                                                GenreSerializer)
-
-from .mixins import CustomViewsSet
-
-
-class CommentAPIView(APIView):
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
-
-    def post(self, request):
-        serializer = CommentSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save(user=request.user)
-
-        return Response({"created": serializer.data})
+from src.applications.books.serializers import (
+    AuthorListSerializer,
+    AuthorDetailSerializer,
+    GenreListSerializer,
+    GenreDetailSerializer,
+    BookDetailSerializer,
+    BookListSerializer,
+    CommentSerializer,
+    CreateBookSerializer,
+)
 
 
-class AuthorListAPIView(ListCreateAPIView):
-    queryset = Author.objects.all()
-    serializer_class = AuthorListSerializer
-    http_method_names = ["get", "post"]
+class AuthorViewSet(viewsets.ModelViewSet):
+    queryset = Author.objects.prefetch_related("books")
+    permission_classes = [permissions.IsAuthenticated]
+    pagination_class = paginators.StandartRelustPaginator
+    serializer_class = AuthorDetailSerializer
+    filter_backends = [filter.DjangoFilterBackend]
+    filterset_fields = ["country"]
+    search_fields = ["name"]
+    ordering_fields = ["name"]
 
-    def post(self, request):
-        new_author = AuthorListSerializer(data=request.data)
-        new_author.is_valid(raise_exception=True)
-        new_author.save(country="Spanish")
-        return Response({"author create": new_author.data})
+    def get_queryset(self):
+        if self.action == "list":
+            return Author.objects.all()
+        return super().get_queryset()
 
+    def get_permissions(self):
+        if self.action in ["list", "retrieve"]:
+            return super().get_permissions()
+        if self.action in ["create", "update", "destroy"]:
+            return permissions.IsAdminUser
 
-class AuthorDetailAPIView(RetrieveUpdateDestroyAPIView):
-    queryset = Author.objects.all()
-    serializer_class = AuthorListSerializer
-    lookup_field = "pk"
+    def get_serializer_class(self):
+        if self.action == "list":
+            return AuthorListSerializer
 
-    author_doesnt_exists = ValueError("This author was dont exists")
-    dont_have_permission = Response({"error": "you dont have permission"})
-
-    def delete(self, request, author_id):
-        try:
-            author = Author.objects.get(id=author_id)
-        except Author.DoesNotExist:
-            raise self.author_doesnt_exists
-
-        if request.user.is_superuser:
-            author.delete()
-
-            return Response({"well done author delete"})
-
-        return self.dont_have_permission
+        return super().get_serializer_class()
 
 
-class GenreViewSets(CustomViewsSet):
+class GenreViewSets(viewsets.ModelViewSet):
     queryset = Genre.objects.all()
-    serializer_class = GenreSerializer
+    serializer_class = GenreListSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    filter_backends = [filter.DjangoFilterBackend]
+    filterset_fields = ["title"]
+    search_fields = filterset_fields
+    ordering_fields = filterset_fields
 
-    def get_serializer_class(self, *args, **kwargs):
-        if self.action in ["list", "create"]:
-            return GenreSerializer
+    def get_queryset(self):
+        if self.action == "retrieve":
+            return Genre.objects.prefetch_related("genre_books")
+        return super().get_queryset()
 
-        return GenreDetailSerializer
+    def get_permissions(self):
+        if self.action in ["list", "retrieve"]:
+            return super().get_permissions()
+        if self.action in ["create", "update", "destroy"]:
+            return permissions.IsAdminUser
+
+    def get_serializer_class(self):
+        if self.action == "retrieve":
+            return GenreDetailSerializer
+
+        return super().get_serializer_class()
 
 
 class BookListAPIView(APIView):
@@ -145,3 +145,14 @@ class BookDetailAPIView(APIView):
             return Response({"well done": "book was delete"})
 
         return self.dont_have_permission
+
+
+class CommentAPIView(APIView):
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+    def post(self, request):
+        serializer = CommentSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(user=request.user)
+
+        return Response({"created": serializer.data})

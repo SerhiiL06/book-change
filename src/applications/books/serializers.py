@@ -2,6 +2,7 @@ from rest_framework import serializers
 
 from src.applications.book_relations.models import BookRelations
 
+
 from .models import Author, Book, Comment, Genre
 
 
@@ -105,7 +106,10 @@ class BookListSerializer(serializers.ModelSerializer):
         return rating if rating else f"None rating"
 
 
-class GenreSerializer(serializers.ModelSerializer):
+# Genre serializers
+
+
+class GenreListSerializer(serializers.ModelSerializer):
     books = serializers.SerializerMethodField()
 
     class Meta:
@@ -113,24 +117,35 @@ class GenreSerializer(serializers.ModelSerializer):
         fields = ["title", "books"]
 
     def get_books(self, obj):
-        return obj.books.count()
+        return obj.genre_books.count()
 
 
-class GenreDetailSerializer(serializers.ModelSerializer):
-    books = BookListSerializer(many=True)
+class GenreDetailSerializer(GenreListSerializer):
+    genre_books = BookDetailSerializer(many=True)
 
     class Meta:
         model = Genre
-        fields = ["title", "books"]
+        fields = GenreListSerializer.Meta.fields + ["genre_books"]
 
 
+# Authors serializers
 class AuthorListSerializer(serializers.ModelSerializer):
     country = serializers.CharField(read_only=True)
     total_books = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = Author
-        fields = ["name", "country", "total_books"]
+        fields = ["id", "name", "country", "total_books"]
 
     def get_total_books(self, obj):
         return obj.books.count()
+
+
+class AuthorDetailSerializer(AuthorListSerializer):
+    from src.applications.books.serializers import BookListSerializer
+
+    books = BookListSerializer(many=True)
+
+    class Meta:
+        model = Author
+        fields = AuthorListSerializer.Meta.fields + ["books"]
