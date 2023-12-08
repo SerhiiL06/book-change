@@ -3,6 +3,7 @@ from http import HTTPStatus
 from rest_framework import permissions
 from django_filters import rest_framework as filter
 from rest_framework.response import Response
+from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.views import APIView
 from rest_framework import viewsets
 from . import paginators
@@ -24,7 +25,7 @@ class AuthorViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
     pagination_class = paginators.StandartRelustPaginator
     serializer_class = AuthorDetailSerializer
-    filter_backends = [filter.DjangoFilterBackend]
+    filter_backends = [filter.DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_fields = ["country"]
     search_fields = ["name"]
     ordering_fields = ["name"]
@@ -53,8 +54,8 @@ class GenreViewSets(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
     filter_backends = [filter.DjangoFilterBackend]
     filterset_fields = ["title"]
-    search_fields = filterset_fields
-    ordering_fields = filterset_fields
+    search_fields = ["title"]
+    ordering_fields = ["title"]
 
     def get_queryset(self):
         if self.action == "retrieve":
@@ -75,7 +76,7 @@ class GenreViewSets(viewsets.ModelViewSet):
 
 
 class BookListAPIView(APIView):
-    # permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
         queryset = Book.objects.all()

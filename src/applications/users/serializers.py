@@ -1,6 +1,7 @@
 from django.conf import settings
 from rest_framework import serializers
 from rest_framework.response import Response
+from rest_framework.exceptions import ValidationError
 
 from src.applications.books.models import Book
 
@@ -10,90 +11,75 @@ from .models import User, UserEmailNewsLetter, UserFollowing, UserProfile
 class MyBooksSerializer(serializers.ModelSerializer):
     class Meta:
         model = Book
-        fields = ["title"]
+        fields = ["id", "title"]
+
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ["id", "email", "full_name"]
+        abstract = True
+
+
+class UserListSerializer(UserSerializer):
+    total_books = serializers.SerializerMethodField()
+    followers = serializers.SerializerMethodField()
+
+    class Meta:
+        model = User
+        fields = UserSerializer.Meta.fields + ["total_books", "followers"]
+
+    def get_total_books(self, obj):
+        return obj.my_books.count()
+
+    def get_followers(self, obj):
+        return obj.followers.count()
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserProfile
-        fields = ["user", "phone_number", "country"]
+        fields = ["phone_number", "country", "social_link", "profession"]
 
 
-class UserSerializer(serializers.ModelSerializer):
-    last_activity = serializers.SerializerMethodField()
-    followers = serializers.SerializerMethodField()
-    profile = UserProfileSerializer(many=False, required=False)
-    total_books = serializers.SerializerMethodField()
-
-    class Meta:
-        model = User
-        fields = [
-            "id",
-            "full_name",
-            "last_activity",
-            "email",
-            "total_books",
-            "followers",
-            "profile",
-        ]
-
-    # methods
-
-    def get_last_activity(self, obj):
-        return obj.last_activity.date()
-
-    def get_followers(self, obj):
-        return obj.followers.count()
-
-    def get_total_books(self, obj):
-        return obj.my_books.count()
-
-
-class UserDetailSerializer(serializers.ModelSerializer):
-    last_activity = serializers.SerializerMethodField()
-    join_at = serializers.SerializerMethodField()
-    followers = serializers.SerializerMethodField()
-    my_books = MyBooksSerializer(many=True, required=False)
-
-    profile = UserProfileSerializer(many=False, required=False)
-    total_books = serializers.SerializerMethodField()
+class UserDetailSerializer(UserSerializer):
+    my_books = MyBooksSerializer(many=True)
+    avatar = serializers.ImageField(source="image")
+    profile = UserProfileSerializer(many=False)
 
     class Meta:
         model = User
-        fields = [
-            "id",
-            "full_name",
-            "join_at",
-            "last_activity",
-            "email",
-            "total_books",
+        fields = UserSerializer.Meta.fields + [
+            "about",
+            "avatar",
+            "status",
+            "is_staff",
+            "is_active",
             "my_books",
-            "followers",
             "profile",
         ]
 
-    def get_last_activity(self, obj):
-        return obj.last_activity.date()
 
-    def get_join_at(self, obj):
-        return obj.join_at.date()
+class UserUpdateSerializer(serializers.ModelSerializer):
+    profile = UserProfileSerializer(many=False)
 
-    def get_followers(self, obj):
-        return obj.followers.count()
-
-    def get_total_books(self, obj):
-        return obj.my_books.count()
+    class Meta:
+        model = User
+        fields = ["first_name", "last_name", "image", "about", "profile"]
 
 
-class UserFollowingSerializer(serializers.ModelSerializer):
-    # user_id = serializers.SerializerMethodField()
-    followers_id = serializers.SerializerMethodField()
-
+class FollowersListSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserFollowing
         fields = ["user_id", "followers_id"]
 
+
+class FollowingSerializer(serializers.Serializer):
+    user_id = serializers.IntegerField(write_only=True)
+
     def create(self, validated_data):
+        if validated_data["user_id"] == validated_data["followers_id"]:
+            raise ValidationError(detail="You cannot subs youself")
         user, create = UserFollowing.objects.get_or_create(
             user_id=validated_data["user_id"],
             followers_id=validated_data["followers_id"],
@@ -104,24 +90,35 @@ class UserFollowingSerializer(serializers.ModelSerializer):
 
         return user
 
-    def get_user_id(self, obj):
-        return obj.user_id.full_name()
+    def validate_user_id(self, value):
+        user = User.objects.filter(id=value)
+        if not user.first():
+            raise ValidationError(detail="User with this ID doesnt exists")
 
-    def get_followers_id(self, obj):
-        return obj.followers_id.full_name()
+        return user
 
 
 class EmailSerializer(serializers.Serializer):
-    subject = serializers.CharField()
-    message = serializers.CharField()
+    subject = serializers.CharField(min_length=10, max_length=50)
+    message = serializers.CharField(min_length=10, max_length=150)
     to = serializers.EmailField()
 
-    def save(self, **kwargs):
-        message = kwargs.get("message")
-        to_user = kwargs.get("to")
+    def validate_to(self, value):
+        user = User.objects.filter(email=value)
+        if not user.first():
+            raise ValidationError(detail="User with this email doesnt exists")
+
+        return value
 
 
 class NewsLetterSerializer(serializers.ModelSerializer):
+    user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
+
     class Meta:
         model = UserEmailNewsLetter
-        fields = ["sending_out_offers", "news_mailer"]
+        fields = ["user", "sending_out_offers", "news_mailer"]
+
+
+class ChangeNewsLetterSerializer(serializers.Serializer):
+    sending_out_offers = serializers.BooleanField(required=False)
+    news_mailer = serializers.BooleanField(required=False)

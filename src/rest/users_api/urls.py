@@ -1,12 +1,17 @@
 from django.urls import path
+from rest_framework.routers import SimpleRouter
 
 from . import views
 
+router = SimpleRouter()
+router.register("admin/users", views.UsersViewSet)
+router.register("followers", views.FollowersViewSet)
+router.register("news_letter", views.NewsLetterSettingsViewSet)
+
+
 urlpatterns = [
-    path("user-list/", views.UsersAPIView.as_view()),
-    path("user-list/<int:pk>/", views.DetailUserAPIView.as_view()),
-    path("my-followers/", views.MyFollowersAPIView.as_view()),
-    path("my-subscriptions/", views.MyFollowingAPIView.as_view()),
     path("send-email/", views.SendEmailAPIView.as_view()),
-    path("newsletter/", views.NewsLetterSettingsAPIView.as_view()),
 ]
+
+
+urlpatterns += router.urls

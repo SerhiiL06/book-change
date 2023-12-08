@@ -2,120 +2,238 @@ from http import HTTPStatus
 
 from django.conf import settings
 from django_filters import rest_framework as filter
-from rest_framework import permissions
-from rest_framework.generics import ListAPIView, RetrieveUpdateDestroyAPIView
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from rest_framework.decorators import action
+from rest_framework import filters
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework import viewsets
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 
-from src.applications.users.models import (User, UserEmailNewsLetter,
-                                           UserFollowing)
-from src.applications.users.serializers import (EmailSerializer,
-                                                NewsLetterSerializer,
-                                                UserDetailSerializer,
-                                                UserFollowingSerializer,
-                                                UserSerializer)
+from src.applications.users.models import User, UserEmailNewsLetter, UserFollowing
+from src.applications.users.serializers import (
+    EmailSerializer,
+    NewsLetterSerializer,
+    FollowingSerializer,
+    UserListSerializer,
+    UserDetailSerializer,
+    UserUpdateSerializer,
+    FollowersListSerializer,
+    ChangeNewsLetterSerializer,
+)
 from src.applications.users.tasks import send_message
 
 from .permissions import IsOwnerOrStaff
 
 
-class UsersAPIView(APIView):
-    permission_classes = [IsAuthenticated]
+class UsersViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint for managing users, avalilable only for staff users.
 
-    def get(self, request):
-        queryset = User.objects.all()
-        email = self.request.query_params.get("email")
-        ordering = self.request.query_params.get("ordering")
-        if email is not None:
-            queryset = User.objects.filter(email=email)
-        if ordering is not None:
-            queryset = queryset.order_by(ordering)
-        serializer = UserSerializer(queryset, many=True)
-        return Response({"user_list": serializer.data})
+    list:
+    Returns a list of all users.
+    Can be filtered by 'is_staff' and searched by 'email' or 'full_name'.
 
+    retrieve:
+    Returns the details of a specific user.
 
-class DetailUserAPIView(RetrieveUpdateDestroyAPIView):
+    partial_update:
+    Updates a user's information.
+
+    Parameters:
+    - is_staff (bool): Choose true or false to filter users by staff status.
+    - email (str): Search users by email.
+
+    """
+
     queryset = User.objects.all()
-    serializer_class = UserDetailSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = UserListSerializer
+    http_method_names = ["get", "patch", "delete"]
+    permission_classes = [IsAdminUser]
+    filter_backends = [filter.DjangoFilterBackend, filters.SearchFilter]
+    filterset_fields = ["is_staff"]
+    search_fields = ["email", "full_name"]
 
-    # def patch(self, request, user_id):
-    #     user = User.objects.get(id=user_id)
-    #     if request.user == user or user.is_superuser:
-    #         user_data = UserDetailSerializer(data=request.data, instance=user)
-    #         user_data.is_valid(raise_exception=True)
-    #         user_data.save()
-    #         return Response({"well_done": "OK"})
-    #     return Response({"You dont have permission for this "})
+    @swagger_auto_schema(
+        operation_description="test",
+        manual_parameters=[
+            openapi.Parameter(
+                "is_staff",
+                in_=openapi.IN_QUERY,
+                description="Choose true or false",
+                required=False,
+                type=openapi.TYPE_BOOLEAN,
+            ),
+        ],
+    )
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
 
-    # def delete(self, request, user_id):
-    #     user = User.objects.get(id=user_id)
-    #     if request.user == user or request.user.is_superuser:
-    #         user.delete()
-    #         return Response({"delete": "object delete"})
-    #     return Response({"You dont have permission for this "})
+    def get_serializer_class(self):
+        if self.action == "list":
+            return super().get_serializer_class()
 
-    def get_permissions(self):
-        if self.request.method == "GET":
-            return super().get_permissions()
-        if self.request.method == "DELETE":
-            return [permissions.IsAdminUser()]
-        if self.request.method == "PATCH":
-            return [IsOwnerOrStaff()]
+        if self.action == "retrieve":
+            return UserDetailSerializer
+
+        if self.action == "partial_update":
+            return UserUpdateSerializer
 
 
-class MyFollowersAPIView(ListAPIView):
-    """Followers list"""
+class FollowersViewSet(viewsets.GenericViewSet):
+    """
+    API endpoint for managing user followers and subscriptions.
+
+    followers_list:
+        returns the list of users to which this current user is subscribed.
+
+    subscription_list:
+        returns the list of users who are subscribed to this current user.
+
+    follow_action:
+        subscription and unsubscribe action for a specific user.
+
+    """
 
     queryset = UserFollowing.objects.all()
-    serializer_class = UserFollowingSerializer
+    permission_classes = [IsAuthenticated]
+    serializer_class = FollowersListSerializer
 
-    def get(self, request):
-        queryset = self.get_queryset().filter(user_id=request.user)
-        serializer = self.serializer_class(instance=queryset, many=True)
-        return Response({"my_followers": serializer.data})
+    @action(
+        methods=["get"],
+        detail=False,
+        permission_classes=[IsAuthenticated],
+        url_path="my-followers",
+    )
+    def followers_list(self, request, *args, **kwargs):
+        queryset = self.get_queryset().filter(user_id=self.request.user)
+        serializer = FollowersListSerializer(instance=queryset, many=True)
+        return Response({"followers_list": serializer.data})
 
+    @action(
+        methods=["get"],
+        detail=False,
+        permission_classes=[IsAuthenticated],
+        url_path="my-subscription",
+    )
+    def subscription_list(self, request, *args, **kwargs):
+        queryset = self.get_queryset().filter(followers_id=self.request.user)
+        serializer = FollowersListSerializer(instance=queryset, many=True)
+        return Response({"suscription_list": serializer.data})
 
-class MyFollowingAPIView(APIView):
-    """Subsctiption list"""
+    @action(
+        methods=["post"],
+        detail=False,
+        url_path="subscript-to",
+        permission_classes=[IsAuthenticated],
+    )
+    def follow_action(self, request, *args, **kwargs):
+        data = FollowingSerializer(data=request.data)
+        data.is_valid(raise_exception=True)
 
-    def get(self, request):
-        queryset = UserFollowing.objects.filter(followers_id=request.user)
-        serializer = UserFollowingSerializer(instance=queryset, many=True)
-        return Response({"my_followers": serializer.data})
+        data.save(followers_id=request.user)
 
-    def post(self, request):
-        serialazer = UserFollowingSerializer(data=request.data)
-        serialazer.is_valid(raise_exception=True)
-        serialazer.save(followers_id=request.user)
         return Response(status=200)
 
 
 class SendEmailAPIView(APIView):
+    """
+    - Endpoint for sending emails.
+    - Only authorized user can send mails.
+    - It is not possible to send a letter to yourself and to an e-mail that is not registered on the site.
+
+    """
+
+    http_method_names = ["post"]
+    permission_classes = [IsAuthenticated]
+
+    @swagger_auto_schema(
+        request_body=EmailSerializer,
+        operation_description="Send email between users",
+    )
     def post(self, request):
         email = EmailSerializer(data=request.data)
         email.is_valid(raise_exception=True)
-        message = request.data.get("message")
-        subject = request.data.get("subject")
-        to_user = request.data.get("to")
+        message = email.validated_data.get("message")
+        subject = email.validated_data.get("subject")
+        to_user = email.validated_data.get("to")
         send_message.delay(subject=subject, message=message, email=to_user)
 
-        return Response({"email was sent!"}, status=HTTPStatus.CREATED)
+        return Response(status=HTTPStatus.CREATED)
 
 
-class NewsLetterSettingsAPIView(APIView):
+class NewsLetterSettingsViewSet(viewsets.GenericViewSet):
+    """
+    ViewSet for managing email newsletter settings.
+
+    """
+
+    queryset = UserEmailNewsLetter.objects.all()
     permission_classes = [IsAuthenticated]
 
-    def get(self, request):
+    @action(methods=["get"], detail=False, url_path="my-newsletter")
+    def my_newsletter(self, request, *args, **kwargs):
+        """
+        Get email newsletter settings for the current user.
+        """
         queryset, _ = UserEmailNewsLetter.objects.get_or_create(user=request.user)
-        serializer = NewsLetterSerializer(instance=queryset)
-        return Response({"newsletter_settings": serializer.data})
+        serializer = NewsLetterSerializer(instance=queryset, many=False)
 
-    def patch(self, request):
-        queryset, _ = UserEmailNewsLetter.objects.get_or_create(user=request.user)
-        serializer = NewsLetterSerializer(data=request.data, instance=queryset)
+        return Response({"user_news_letter": serializer.data})
+
+    @swagger_auto_schema(
+        method="get", operation_description="list of users newsletter settings"
+    )
+    @action(
+        methods=["get"],
+        detail=False,
+        url_path="admin/newletter-list",
+        permission_classes=[IsAdminUser],
+    )
+    def nawsletter_list(self, request):
+        """
+        Get a list of email newsletter settings for administrators.
+        Available only for staff users.
+        """
+        serializer = NewsLetterSerializer(self.get_queryset(), many=True)
+        return Response({"newsletter_list": serializer.data})
+
+    @swagger_auto_schema(
+        method="patch",
+        request_body=ChangeNewsLetterSerializer,
+        operation_description="change newsletter settings",
+    )
+    @action(
+        methods=["patch"],
+        detail=False,
+        url_path="change-newletter",
+        permission_classes=[IsOwnerOrStaff],
+    )
+    def change_newsletter(self, request, *args, **kwargs):
+        """
+        Change email newsletter settings for the current user.
+        """
+        newsletter, _ = UserEmailNewsLetter.objects.update_or_create(user=request.user)
+
+        serializer = ChangeNewsLetterSerializer(
+            instance=newsletter, data=request.data, many=False
+        )
+
         serializer.is_valid(raise_exception=True)
-        serializer.save()
 
-        return Response({"your newsletter": "was update"})
+        for field, value in serializer.validated_data.items():
+            newsletter.__setattr__(field, value)
+
+        newsletter.save()
+
+        return Response(data="Settings was updated", status=200)
+
+    def get_permissions_classes(self):
+        """
+        Define permission classes based on the action.
+        """
+
+        if self.action == "list":
+            return IsAdminUser
+        return super().get_permissions()

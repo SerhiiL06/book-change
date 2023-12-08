@@ -74,6 +74,7 @@ INSTALLED_APPS = [
     "taggit",
     "django_celery_beat",
     "django_celery_results",
+    "drf_yasg",
 ]
 
 MIDDLEWARE = [
@@ -301,7 +302,10 @@ REST_FRAMEWORK = {
         "rest_framework.renderers.JSONRenderer",
         "rest_framework.renderers.BrowsableAPIRenderer",
     ],
-    "DEFAULT_FILTER_BACKENDS": ("django_filters.rest_framework.DjangoFilterBackend"),
+    "DEFAULT_FILTER_BACKENDS": [
+        "django_filters.rest_framework.DjangoFilterBackend",
+        "rest_framework.filters.SearchFilter",
+    ],
 }
 
 
@@ -311,6 +315,7 @@ SESSION_CACHE_ALIAS = "default"
 
 SESSION_COOKIE_AGE = 12000
 SESSION_SAVE_EVERY_REQUEST = True
+
 
 REDIS_HOST = "redis"
 REDIS_PORT = "6379"
