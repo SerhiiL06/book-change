@@ -33,12 +33,10 @@ class CommentSerializer(serializers.ModelSerializer):
         return Comment.objects.create(**validated_data)
 
 
-class UpdateCommentSerializer(CommentSerializer):
-    id = serializers.IntegerField()
-
+class UpdateCommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
-        fields = ["id", "comment"]
+        fields = ["comment"]
 
     def update(self, instance, validated_data):
         if instance.user != validated_data["current_user"]:

@@ -2,6 +2,7 @@ from rest_framework import permissions
 from django.shortcuts import get_object_or_404
 from django_filters import rest_framework as filter
 from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 from rest_framework.response import Response
 from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework import viewsets
@@ -87,6 +88,15 @@ class BookViewSet(viewsets.ModelViewSet):
     serializer_class = BookListSerializer
     http_method_names = ["get", "post", "put", "delete"]
 
+    filter_backends = [filter.DjangoFilterBackend]
+    filtersets_fields = ["owner", "author", "genre"]
+
+    @swagger_auto_schema(
+        operation_description="get all books. paramethers: owner, author, genre",
+    )
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
+
     @swagger_auto_schema(request_body=CreateBookSerializer)
     def create(self, request, *args, **kwargs):
         data = CreateBookSerializer(data=request.data)
@@ -139,46 +149,28 @@ class BookViewSet(viewsets.ModelViewSet):
 
 
 class CommentViewSet(viewsets.ModelViewSet):
-    http_method_names = ["post", "update", "delete"]
+    http_method_names = ["post", "put", "delete"]
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
     permission_classes = [permissions.IsAuthenticated]
-    authentication_classes = [permissions.IsAuthenticated]
+    parser_classes = [parsers.MultiPartParser]
 
-    @swagger_auto_schema(method="post", request_body=CommentSerializer)
-    @action(
-        methods=["post"],
-        detail=False,
-        url_path="add-comment",
-        permission_classes=[permissions.IsAuthenticated],
-        parser_classes=[parsers.MultiPartParser],
-    )
-    def add_comment(self, request):
-        new_comment = CommentSerializer(data=request.data)
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
 
-        new_comment.is_valid(raise_exception=True)
+    @swagger_auto_schema(request_body=UpdateCommentSerializer)
+    def update(self, request, *args, **kwargs):
+        return super().update(request, *args, **kwargs)
 
-        new_comment.save(user=request.user)
+    def perform_update(self, serializer):
+        return serializer.save(current_user=self.request.user)
 
-        return Response(status=200, data="Comment was added")
-
-    @swagger_auto_schema(method="put", request_body=UpdateCommentSerializer)
-    @action(methods=["put"], detail=False, url_path="update-comment")
-    def update_comment(self, request):
-        comment = get_object_or_404(Comment, id=request.data["id"])
-
-        serializer = UpdateCommentSerializer(
-            instance=comment, data=request.data, many=False
-        )
-
-        serializer.is_valid(raise_exception=True)
-
-        serializer.save(current_user=request.user)
-
-        return Response(status=200, data="Update")
-
-    def get_permissions_classes(self):
+    def get_permissions(self):
         if self.action == "destroy":
             return OwnerOrStaff
+        return super().get_permissions()
 
-        return super().get_permissions_classes()
+    def get_serializer_class(self):
+        if self.action in ["update", "partial_update"]:
+            return UpdateCommentSerializer
+        return super().get_serializer_class()
