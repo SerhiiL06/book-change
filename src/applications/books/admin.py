@@ -37,7 +37,7 @@ class BookAdmin(admin.ModelAdmin):
 
 @admin.register(Comment)
 class CommentAdmin(admin.ModelAdmin):
-    readonly_fields = ["created_at"]
+    readonly_fields = ["created_at", "edited"]
 
 
 @admin.register(BookInPDF)

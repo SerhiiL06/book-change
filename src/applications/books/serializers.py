@@ -1,30 +1,70 @@
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
 
 from src.applications.book_relations.models import BookRelations
+from django.utils import timezone
 
 
 from .models import Author, Book, Comment, Genre
 
 
+class LatestBooksSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Book
+        fields = ["title", "created_at", "owner"]
+
+
+class RecommendedSerializer(LatestBooksSerializer):
+    pass
+
+
 class CommentSerializer(serializers.ModelSerializer):
-    created_at = serializers.DateTimeField(required=False)
-    edited = serializers.DateTimeField(required=False)
-    user = serializers.SerializerMethodField()
+    class Meta:
+        model = Comment
+        fields = ["comment", "book"]
+
+    def validate_comment(self, value):
+        if not len(value) in range(10, 100):
+            raise ValidationError(detail="Your comment is short or so long")
+
+        return value
+
+    def create(self, validated_data):
+        return Comment.objects.create(**validated_data)
+
+
+class UpdateCommentSerializer(CommentSerializer):
+    id = serializers.IntegerField()
 
     class Meta:
         model = Comment
-        fields = ["user", "book", "comment", "created_at", "edited"]
+        fields = ["id", "comment"]
 
-    def get_user(self, obj):
-        return obj.user.full_name()
+    def update(self, instance, validated_data):
+        if instance.user != validated_data["current_user"]:
+            raise ValidationError("You cannot update this comment")
+
+        instance.comment = validated_data["comment"]
+
+        instance.save()
+
+        return instance
 
 
-class CreateBookSerializer(serializers.Serializer):
-    title = serializers.CharField()
-    description = serializers.CharField()
-    genre_id = serializers.IntegerField()
-    author_id = serializers.IntegerField()
-    owner_id = serializers.IntegerField(required=False)
+class CreateBookSerializer(serializers.ModelSerializer):
+    description = serializers.CharField(required=False)
+    created_at = serializers.HiddenField(default=timezone.now)
+
+    class Meta:
+        model = Book
+        fields = [
+            "title",
+            "image",
+            "description",
+            "genre",
+            "author",
+            "created_at",
+        ]
 
     def create(self, validated_data):
         return Book.objects.create(**validated_data)
@@ -38,7 +78,7 @@ class BookDetailSerializer(serializers.ModelSerializer):
     owner = serializers.SerializerMethodField()
     created_at = serializers.SerializerMethodField()
     rating = serializers.SerializerMethodField()
-    comments = serializers.SerializerMethodField()
+    comments = CommentSerializer(many=True)
 
     class Meta:
         model = Book
@@ -85,6 +125,24 @@ class BookDetailSerializer(serializers.ModelSerializer):
         comments = Comment.objects.filter(book=obj)
         return CommentSerializer(comments, many=True).data
 
+    def to_representation(self, instance):
+        latest_books_queryset = Book.objects.all()[:3]
+
+        latest_books_data = LatestBooksSerializer(
+            instance=latest_books_queryset, many=True
+        ).data
+
+        recommended_queryset = instance.get_recommended(genre=instance.genre)
+
+        recommended_data = RecommendedSerializer(
+            instance=recommended_queryset, many=True
+        ).data
+
+        representation = super().to_representation(instance)
+        representation["latest_books"] = latest_books_data
+        representation["recommended"] = recommended_data
+        return representation
+
 
 class BookListSerializer(serializers.ModelSerializer):
     owner = serializers.SerializerMethodField()
@@ -104,6 +162,12 @@ class BookListSerializer(serializers.ModelSerializer):
     def get_avg_rating(self, obj):
         rating = BookRelations.objects.get_rating(obj)
         return rating if rating else f"None rating"
+
+
+class BookUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Book
+        fields = ["title", "description", "image"]
 
 
 # Genre serializers

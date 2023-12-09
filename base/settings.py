@@ -149,8 +149,6 @@ DATABASES = {
         "HOST": os.environ.get("DB_HOST"),
     },
 }
-
-
 # Local DB
 
 # DATABASES = {

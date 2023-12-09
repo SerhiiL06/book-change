@@ -7,13 +7,11 @@ router = SimpleRouter()
 
 router.register(r"genre", views.GenreViewSets)
 router.register(r"author", views.AuthorViewSet)
+router.register(r"book", views.BookViewSet)
+router.register(r"comment", views.CommentViewSet)
 
 
-urlpatterns = [
-    path("book-list/", views.BookListAPIView.as_view()),
-    path("book-list/<int:book_id>/", views.BookDetailAPIView.as_view()),
-    path("add-comment/", views.CommentAPIView.as_view()),
-]
+urlpatterns = []
 
 
 urlpatterns += router.urls

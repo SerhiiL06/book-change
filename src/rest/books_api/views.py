@@ -1,13 +1,15 @@
-from http import HTTPStatus
-
 from rest_framework import permissions
+from django.shortcuts import get_object_or_404
 from django_filters import rest_framework as filter
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework.response import Response
 from rest_framework.filters import SearchFilter, OrderingFilter
-from rest_framework.views import APIView
 from rest_framework import viewsets
+from rest_framework import parsers
+from rest_framework.decorators import action
+from .permissions import OwnerOrStaff
 from . import paginators
-from src.applications.books.models import Author, Book, Genre
+from src.applications.books.models import Author, Book, Genre, Comment
 from src.applications.books.serializers import (
     AuthorListSerializer,
     AuthorDetailSerializer,
@@ -16,14 +18,16 @@ from src.applications.books.serializers import (
     BookDetailSerializer,
     BookListSerializer,
     CommentSerializer,
+    UpdateCommentSerializer,
     CreateBookSerializer,
+    BookUpdateSerializer,
 )
 
 
 class AuthorViewSet(viewsets.ModelViewSet):
     queryset = Author.objects.prefetch_related("books")
     permission_classes = [permissions.IsAuthenticated]
-    pagination_class = paginators.StandartRelustPaginator
+    pagination_class = paginators.StandartResultPaginator
     serializer_class = AuthorDetailSerializer
     filter_backends = [filter.DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_fields = ["country"]
@@ -75,85 +79,106 @@ class GenreViewSets(viewsets.ModelViewSet):
         return super().get_serializer_class()
 
 
-class BookListAPIView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
+class BookViewSet(viewsets.ModelViewSet):
+    queryset = Book.objects.all()
+    permission_classes = [OwnerOrStaff]
+    pagination_class = paginators.BookPaginator
+    parser_classes = [parsers.MultiPartParser]
+    serializer_class = BookListSerializer
+    http_method_names = ["get", "post", "put", "delete"]
 
-    def get(self, request):
-        queryset = Book.objects.all()
-        owner_search = request.query_params.get("owner")
-        title_search = request.query_params.get("title")
-        genre_search = request.query_params.get("genre")
-        ordering_search = request.query_params.get("ordering")
-        if owner_search:
-            queryset = Book.objects.filter(owner__email=owner_search)
+    @swagger_auto_schema(request_body=CreateBookSerializer)
+    def create(self, request, *args, **kwargs):
+        data = CreateBookSerializer(data=request.data)
+        data.is_valid(raise_exception=True)
+        data.save(owner=request.user)
+        return Response(status=200, data="book create")
 
-        if title_search:
-            queryset = Book.objects.filter(title__icontains=title_search)
+    @swagger_auto_schema(request_body=BookUpdateSerializer)
+    def update(self, request, *args, **kwargs):
+        return super().update(request, *args, **kwargs)
 
-        if genre_search:
-            queryset = Book.objects.filter(genre__title__icontains=genre_search)
-
-        if ordering_search:
-            queryset = Book.objects.all().order_by(ordering_search)
-
-        serializer = BookListSerializer(queryset, many=True)
-        return Response({"list_of_books": serializer.data})
-
-    def post(self, request, *args, **kwargs):
-        new_book = CreateBookSerializer(data=request.data)
-        new_book.is_valid(raise_exception=True)
-        new_book.save(owner=request.user)
-
-        return Response({"new book": new_book.data})
-
-
-class BookDetailAPIView(APIView):
-    error_except = Response(
-        {"Error": "Book with this ID does not exist"}, status=HTTPStatus.NOT_FOUND
+    @action(
+        methods=["get"],
+        detail=False,
+        permission_classes=[permissions.IsAuthenticated],
+        url_path="my-books",
     )
-    dont_have_permission = Response({"error": "You don't have permissions"})
+    def my_books(self, request):
+        books = Book.objects.filter(owner=request.user)
 
-    def get(self, request, book_id):
-        try:
-            book = Book.objects.get(id=book_id)
-        except Book.DoesNotExist:
-            return self.error_except
-        serializer = BookDetailSerializer(book, many=False)
-        return Response({"book": serializer.data})
+        serializer = BookListSerializer(instance=books, many=True)
 
-    def patch(self, request, book_id):
-        try:
-            book = Book.objects.get(id=book_id)
-        except Book.DoesNotExist:
-            return self.error_except
-        if book.owner == request.user:
-            serializer = BookDetailSerializer(data=request.data, instance=book)
-            serializer.is_valid(raise_exception=True)
-            serializer.save()
+        return Response({"my_books": serializer.data})
 
-            return Response({"update is good": serializer.data})
+    def get_serializer_class(self):
+        if self.action == "list":
+            return super().get_serializer_class()
 
-        return self.dont_have_permission
+        if self.action == "create":
+            return CreateBookSerializer
 
-    def delete(self, request, book_id):
-        try:
-            book = Book.objects.get(id=book_id)
-        except Book.DoesNotExist:
-            return self.error_except
+        if self.action == "update":
+            return BookUpdateSerializer
+        return BookDetailSerializer
 
-        if book.owner == request.user or request.user.is_superuser:
-            book.delete()
-            return Response({"well done": "book was delete"})
+    def get_permissions_classes(self):
+        if self.action in ["list", "retrieve"]:
+            return permissions.AllowAny
 
-        return self.dont_have_permission
+        if self.action == "create":
+            return permissions.IsAuthenticated
+
+        return super().get_permissions_classes()
+
+    def get_queryset(self):
+        if self.action == "list":
+            return super().get_queryset()
+
+        return Book.objects.prefetch_related("comments")
 
 
-class CommentAPIView(APIView):
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+class CommentViewSet(viewsets.ModelViewSet):
+    http_method_names = ["post", "update", "delete"]
+    queryset = Comment.objects.all()
+    serializer_class = CommentSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    authentication_classes = [permissions.IsAuthenticated]
 
-    def post(self, request):
-        serializer = CommentSerializer(data=request.data)
+    @swagger_auto_schema(method="post", request_body=CommentSerializer)
+    @action(
+        methods=["post"],
+        detail=False,
+        url_path="add-comment",
+        permission_classes=[permissions.IsAuthenticated],
+        parser_classes=[parsers.MultiPartParser],
+    )
+    def add_comment(self, request):
+        new_comment = CommentSerializer(data=request.data)
+
+        new_comment.is_valid(raise_exception=True)
+
+        new_comment.save(user=request.user)
+
+        return Response(status=200, data="Comment was added")
+
+    @swagger_auto_schema(method="put", request_body=UpdateCommentSerializer)
+    @action(methods=["put"], detail=False, url_path="update-comment")
+    def update_comment(self, request):
+        comment = get_object_or_404(Comment, id=request.data["id"])
+
+        serializer = UpdateCommentSerializer(
+            instance=comment, data=request.data, many=False
+        )
+
         serializer.is_valid(raise_exception=True)
-        serializer.save(user=request.user)
 
-        return Response({"created": serializer.data})
+        serializer.save(current_user=request.user)
+
+        return Response(status=200, data="Update")
+
+    def get_permissions_classes(self):
+        if self.action == "destroy":
+            return OwnerOrStaff
+
+        return super().get_permissions_classes()

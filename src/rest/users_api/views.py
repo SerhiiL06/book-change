@@ -49,7 +49,7 @@ class UsersViewSet(viewsets.ModelViewSet):
 
     """
 
-    queryset = User.objects.all()
+    queryset = User.objects.select_related("followers", "books")
     serializer_class = UserListSerializer
     http_method_names = ["get", "patch", "delete"]
     authentication_classes = [BasicAuthentication, TokenAuthentication]
@@ -174,6 +174,7 @@ class NewsLetterSettingsViewSet(viewsets.GenericViewSet):
 
     queryset = UserEmailNewsLetter.objects.all()
     permission_classes = [IsAuthenticated]
+    serializer_class = NewsLetterSerializer
 
     @action(methods=["get"], detail=False, url_path="my-newsletter")
     def my_newsletter(self, request, *args, **kwargs):

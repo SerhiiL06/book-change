@@ -55,10 +55,13 @@ class Book(models.Model):
         return super().save(*args, **kwargs)
 
     def get_recommended(self, genre):
-        recommend_books = list(Book.objects.filter(genre=genre).select_related("owner"))
-        if len(recommend_books) < 3:
-            recommend_books += Book.objects.all()[:4]
-        return random.sample(recommend_books, 3)
+        recommend_ids = list(
+            Book.objects.filter(genre=genre).values_list("id", flat=True)
+        )
+
+        list_book = random.sample(recommend_ids, len(recommend_ids))
+
+        return Book.objects.filter(id__in=list_book[:3])
 
     def __str__(self):
         return self.title
