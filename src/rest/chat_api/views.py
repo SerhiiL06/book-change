@@ -1,32 +1,63 @@
 from django.db.models import Q
+from django.shortcuts import get_object_or_404
 from rest_framework import permissions
 from rest_framework.response import Response
-from rest_framework.views import APIView
+from drf_yasg.utils import swagger_auto_schema
+from rest_framework import viewsets
+from rest_framework import permissions
+from rest_framework.decorators import action
 
 from src.applications.chat.models import PrivateMessage
-from src.applications.chat.serializers import PrivateMessageSerializer
+from src.applications.chat.serializers import (
+    PrivateMessageSerializer,
+    SendPrivateMessage,
+)
 from src.applications.users.models import User
+from .paginators import MessagePaginator
 
 
-class PrivateMessageAPIView(APIView):
+class PrivateMessageViewSet(viewsets.GenericViewSet):
+    """
+    A viewset for handling private messages.
+
+    Actions:
+        - `message_with`: Retrieve the messages between the authenticated user and another user.
+        - `send_message`: Send a private message.
+
+    """
+
+    queryset = PrivateMessage.objects.all()
+    serializer_class = PrivateMessageSerializer
     permission_classes = [permissions.IsAuthenticated]
+    pagination_class = MessagePaginator
 
-    def get(self, request, user_id):
-        try:
-            user = User.objects.get(id=user_id)
-        except User.DoesNotExist:
-            return Response("user not exist")
+    @action(
+        methods=["get"],
+        detail=True,
+        url_path="messages",
+        url_name="list_of_correspondence",
+    )
+    def message_with(self, request, *args, **kwargs):
+        user = get_object_or_404(User, id=kwargs["pk"])
+
         queryset = PrivateMessage.objects.filter(
             (Q(sender=request.user) | Q(recipient=request.user))
             & (Q(sender=user) | Q(recipient=user))
         ).order_by("-timestamp")
+
         serializer = PrivateMessageSerializer(instance=queryset, many=True)
 
-        return Response({"messages": serializer.data})
+        return Response({"correspondence": serializer.data})
 
-    def post(self, request, user_id):
-        message = PrivateMessageSerializer(data=request.data)
-        message.is_valid(raise_exception=True)
-        user = User.objects.get(id=user_id)
-        message.save(sender=request.user, recipient=user)
-        return Response("message was sent")
+    @swagger_auto_schema(method="post", request_body=SendPrivateMessage)
+    @action(
+        methods=["post"], detail=False, url_path="send-message", url_name="send-message"
+    )
+    def send_message(self, request):
+        serializer = SendPrivateMessage(data=request.data)
+
+        serializer.is_valid(raise_exception=True)
+
+        serializer.save(sender=request.user)
+
+        return Response(status=200, data="Message was send")
