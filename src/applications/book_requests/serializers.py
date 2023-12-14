@@ -1,5 +1,9 @@
 from rest_framework import serializers
+from rest_framework import status
 from rest_framework.response import Response
+from django.shortcuts import get_object_or_404
+from django.db.models import Q
+from datetime import datetime
 
 from src.applications.books.models import Book
 
@@ -33,7 +37,22 @@ class BookRequestListSerializer(serializers.Serializer):
 class BookRequestDetailSerializer(serializers.ModelSerializer):
     request_from_user = serializers.CharField(read_only=True)
     created = serializers.DateTimeField(read_only=True)
-    status = serializers.CharField(read_only=True)
+
+    status = serializers.HiddenField(default="send")
+
+    def create(self, validated_data):
+        book = validated_data.get("book")
+
+        if book.owner == validated_data.get("request_from_user"):
+            raise serializers.ValidationError("Error!!!")
+        get = BookRequest.objects.filter(
+            Q(request_from_user=validated_data.get("request_from_user")) & Q(book=book)
+        )
+
+        if get.exists():
+            raise serializers.ValidationError("you can send request only one")
+
+        return BookRequest.objects.create(**validated_data)
 
     class Meta:
         model = BookRequest
