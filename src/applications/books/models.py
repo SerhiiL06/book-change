@@ -61,7 +61,7 @@ class Book(models.Model):
 
         list_book = random.sample(recommend_ids, len(recommend_ids))
 
-        return Book.objects.filter(id__in=list_book[:3])
+        return Book.objects.filter(id__in=list_book[:3]).select_related("owner")
 
     def __str__(self):
         return self.title

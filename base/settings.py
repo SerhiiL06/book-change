@@ -132,6 +132,14 @@ WSGI_APPLICATION = "base.wsgi.application"
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 
+def show_toolbar(request):
+    return True
+
+
+DEBUG_TOOLBAR_CONFIG = {
+    "SHOW_TOOLBAR_CALLBACK": show_toolbar,
+}
+
 # FOR DOCKER
 DATABASES = {
     "default": {

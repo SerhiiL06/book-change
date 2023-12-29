@@ -109,12 +109,8 @@ class GeneralProfileView(DetailView):
     """Another user profile view"""
 
     template_name = "users/user-profile.html"
-    model = User
+    queryset = User.objects.all().select_related("profile")
     context_object_name = "object"
-
-    def get_object(self, queryset=None):
-        q = User.objects.all().select_related("profile")
-        return super().get_object(queryset=q)
 
     def get_context_data(self, **kwargs):
         obj = self.get_object()
