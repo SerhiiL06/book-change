@@ -40,7 +40,7 @@
       </ul>
      
         <li class="nav-item">
-          <a class="nav-link active" href="#">News (Comming soon)</a>
+          <a class="nav-link active" href={%url "news:news-list"%}>News (NEW!!!)</a>
         </li>
       </ul>
 
@@ -69,6 +69,7 @@
             <li><a class="dropdown-item" href="{% url "subscription:plan-list" %}">Subscription</a></li>
             {% if user.is_staff %}
             <li><a class="dropdown-item" href="#">Admin page</a></li>
+            <li><a class="dropdown-item" href={%url "news:create-news"%}>Publish news</a></li>
             {% endif %}
             <li><hr class="dropdown-divider"></li>
             <li><a class="dropdown-item" href="{% url "users:logout" %}">Logout</a></li>

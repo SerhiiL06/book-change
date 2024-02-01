@@ -98,8 +98,12 @@
 
                         <br><br>
 
+
+                        {% if user.is_authenticated %}   
                         <h4>Leave a Reply</h4>
                         {% include "books/comment.html" %}
+                        {% endif %}
+                        
                         
                         
                     </div>

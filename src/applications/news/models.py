@@ -15,6 +15,9 @@ class News(models.Model):
 
     author = models.ForeignKey(User, on_delete=models.PROTECT)
 
+    class Meta:
+        ordering = ["-created_date"]
+
 
 class Like(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="likes_news")

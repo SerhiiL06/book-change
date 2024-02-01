@@ -1,0 +1,78 @@
+{% include "base.html" %}
+
+
+{% load crispy_forms_tags %}
+
+
+{% block content %}
+
+     <br>
+
+        <div class="container bg-white shadow-md p-5 form-layout">
+            <div class-"text-align: center;">
+<h3> Write news </h3>
+
+
+            </div>
+            
+                 
+               
+
+
+            <hr>
+            <br>
+
+    <form method="POST" autocomplete="off" enctype="multipart/form-data">
+
+                {% csrf_token %}
+
+
+
+                {{form.title|as_crispy_field}}
+
+                <br> <br>
+
+
+                {{form.text|as_crispy_field}}
+
+                <br> <br>
+
+                 {{form.image|as_crispy_field}}
+
+                <br> <br>
+
+                 {{form.publish|as_crispy_field}}
+
+                <br> <br>
+
+
+
+                
+
+                
+
+                <br> <br>
+                
+                <button type="submit" class="btn btn-primary navbar-btn text-white w-100 p-2"> &nbsp; Publish news </button>
+
+                <br> <br>
+
+         
+
+             
+
+
+            </form>
+
+
+            
+
+        </div>
+
+
+
+
+    <br> <br>
+
+
+{% endblock content %}

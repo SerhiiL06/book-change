@@ -3,6 +3,13 @@ body {
     background: #eee;
 }
 
+.delete-button {
+    background-color: none;
+    border: none;
+  
+
+}
+
 .profile-header {
     position: relative;
     overflow: hidden
