@@ -17,6 +17,10 @@ class News(models.Model):
 
     class Meta:
         ordering = ["-created_date"]
+        verbose_name_plural = "news"
+
+    def __str__(self) -> str:
+        return self.title
 
 
 class Like(models.Model):

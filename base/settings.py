@@ -63,6 +63,7 @@ INSTALLED_APPS = [
     "src.rest.chat_api",
     "src.applications.gallery",
     "src.applications.news",
+    "src.rest.news_api",
     "src.applications.subscriptions",
     "src.rest.subscriptions_api",
     # other

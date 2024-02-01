@@ -38,6 +38,7 @@ urlpatterns = [
     path("gallery/", include(f"{app_pattern}gallery.urls")),
     # news app
     path("news/", include(f"{app_pattern}news.urls")),
+    path("api-news/", include(f"{rest_pattern}news_api.urls")),
     #
     path("subscriptions/", include(f"{app_pattern}subscriptions.urls")),
     path("api-subscriptions/", include(f"{rest_pattern}subscriptions_api.urls")),
