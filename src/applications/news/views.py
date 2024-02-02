@@ -1,16 +1,19 @@
 from typing import Any
 
+from django.contrib.auth.decorators import login_required
+from django.core.exceptions import PermissionDenied
 from django.db.models.query import QuerySet
 from django.http import HttpRequest, HttpResponse
-from django.shortcuts import HttpResponseRedirect, redirect, get_object_or_404
+from django.shortcuts import HttpResponseRedirect, get_object_or_404, redirect
 from django.urls import reverse_lazy
-from django.core.exceptions import PermissionDenied
-from django.views.generic import ListView, View, CreateView, DeleteView
+from django.utils.decorators import method_decorator
+from django.views.generic import CreateView, DeleteView, ListView, View
 
-from .models import Like, News
 from .forms import NewsForm
+from .models import Like, News
 
 
+@method_decorator(login_required, name="get")
 class NewsListView(ListView):
     template_name = "news/news-list.html"
     model = News

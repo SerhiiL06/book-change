@@ -1,9 +1,9 @@
-from rest_framework import viewsets, status
-from rest_framework.response import Response
-from rest_framework.decorators import action
 from django.shortcuts import get_object_or_404
-from rest_framework import permissions
-from src.applications.news.models import News, Like
+from rest_framework import permissions, status, viewsets
+from rest_framework.decorators import action
+from rest_framework.response import Response
+
+from src.applications.news.models import Like, News
 from src.applications.news.serializers import NewsSerializer
 
 

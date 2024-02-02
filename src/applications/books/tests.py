@@ -1,8 +1,11 @@
+from http import HTTPStatus
+
 from django.test import TestCase
 from django.urls import reverse
-from http import HTTPStatus
-from .models import Book, Author
+
 from src.applications.users.models import User
+
+from .models import Author, Book
 
 
 class BookPageTestCase(TestCase):

@@ -6,27 +6,15 @@ from django.contrib.auth.views import LoginView
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseForbidden
 from django.shortcuts import HttpResponseRedirect, redirect, render
-from django.urls import reverse_lazy, reverse
-from django.views.generic import (
-    CreateView,
-    DetailView,
-    FormView,
-    ListView,
-    TemplateView,
-    UpdateView,
-)
+from django.urls import reverse, reverse_lazy
+from django.views.generic import (CreateView, DetailView, FormView, ListView,
+                                  TemplateView, UpdateView)
 
 from src.applications.book_relations.logic import get_user_rating
 
 from .decorators import is_following, is_object_owner
-from .forms import (
-    EmailNewsLetterForm,
-    LoginForm,
-    MessageForm,
-    OptionalUserInformationForm,
-    ProfileForm,
-    RegisterForm,
-)
+from .forms import (EmailNewsLetterForm, LoginForm, MessageForm,
+                    OptionalUserInformationForm, ProfileForm, RegisterForm)
 from .models import User, UserEmailNewsLetter, UserFollowing, UserProfile
 from .tasks import send_email_verification, send_message
 

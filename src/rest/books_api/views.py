@@ -1,28 +1,26 @@
-from rest_framework import permissions
 from django.shortcuts import get_object_or_404
 from django_filters import rest_framework as filter
-from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
-from rest_framework.response import Response
-from rest_framework.filters import SearchFilter, OrderingFilter
-from rest_framework import viewsets
-from rest_framework import parsers
+from drf_yasg.utils import swagger_auto_schema
+from rest_framework import parsers, permissions, viewsets
 from rest_framework.decorators import action
-from .permissions import OwnerOrStaff
+from rest_framework.filters import OrderingFilter, SearchFilter
+from rest_framework.response import Response
+
+from src.applications.books.models import Author, Book, Comment, Genre
+from src.applications.books.serializers import (AuthorDetailSerializer,
+                                                AuthorListSerializer,
+                                                BookDetailSerializer,
+                                                BookListSerializer,
+                                                BookUpdateSerializer,
+                                                CommentSerializer,
+                                                CreateBookSerializer,
+                                                GenreDetailSerializer,
+                                                GenreListSerializer,
+                                                UpdateCommentSerializer)
+
 from . import paginators
-from src.applications.books.models import Author, Book, Genre, Comment
-from src.applications.books.serializers import (
-    AuthorListSerializer,
-    AuthorDetailSerializer,
-    GenreListSerializer,
-    GenreDetailSerializer,
-    BookDetailSerializer,
-    BookListSerializer,
-    CommentSerializer,
-    UpdateCommentSerializer,
-    CreateBookSerializer,
-    BookUpdateSerializer,
-)
+from .permissions import OwnerOrStaff
 
 
 class AuthorViewSet(viewsets.ModelViewSet):

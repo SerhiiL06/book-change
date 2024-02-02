@@ -1,9 +1,10 @@
 from django.db.models import Q
 from django.shortcuts import HttpResponseRedirect, render
-from django.views.generic import View
+from django.views.generic import CreateView, View
 
 from src.applications.users.models import User
 
+from .forms import ShareMessageForm
 from .logic import get_unique
 from .models import PrivateMessage
 

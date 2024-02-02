@@ -1,10 +1,9 @@
-from .models import Subscription
+import stripe
 from django.contrib.auth import get_user_model
 from django.urls import reverse
+
+from .models import Subscription
 from .utils import StripeItems
-
-
-import stripe
 
 
 def create_stripe_session(request, item):

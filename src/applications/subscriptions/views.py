@@ -4,16 +4,15 @@ from typing import Any
 import stripe
 from django.conf import settings
 from django.contrib import messages
-from django.shortcuts import HttpResponseRedirect, get_object_or_404, redirect, render
+from django.shortcuts import (HttpResponseRedirect, get_object_or_404,
+                              redirect, render)
 from django.urls import reverse
 from django.views.generic import FormView, ListView, View
 
-from .tasks import send_email_about_payment
-
 from .forms import ChoicePeriodForm
+from .logic import create_stripe_session, get_stripe_session
 from .models import BillingPlan, Subscription
-from .logic import get_stripe_session, create_stripe_session
-
+from .tasks import send_email_about_payment
 
 stripe.api_version = settings.STRIPE_VERSION
 stripe.api_key = settings.STRIPE_SECRET_KEY

@@ -12,4 +12,7 @@ urlpatterns = [
     ),
     path("rait/", views.left_rating, name="rating"),
     path("my-bookmarks/", views.bookmark_list, name="bookmark-list"),
+    path(
+        "share/<slug:book_slug>/", views.ShareMessageView.as_view(), name="share-book"
+    ),
 ]

@@ -1,9 +1,8 @@
+from django.utils import timezone
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
 from src.applications.book_relations.models import BookRelations
-from django.utils import timezone
-
 
 from .models import Author, Book, Comment, Genre
 

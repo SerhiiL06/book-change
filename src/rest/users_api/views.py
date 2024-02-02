@@ -2,28 +2,26 @@ from http import HTTPStatus
 
 from django.conf import settings
 from django_filters import rest_framework as filter
-from rest_framework.permissions import IsAuthenticated, IsAdminUser
-from rest_framework.decorators import action
-from rest_framework import filters
-from rest_framework.response import Response
-from rest_framework.authentication import BasicAuthentication, TokenAuthentication
-from rest_framework.views import APIView
-from rest_framework import viewsets
-
-from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
+from drf_yasg.utils import swagger_auto_schema
+from rest_framework import filters, viewsets
+from rest_framework.authentication import (BasicAuthentication,
+                                           TokenAuthentication)
+from rest_framework.decorators import action
+from rest_framework.permissions import IsAdminUser, IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
-from src.applications.users.models import User, UserEmailNewsLetter, UserFollowing
-from src.applications.users.serializers import (
-    EmailSerializer,
-    NewsLetterSerializer,
-    FollowingSerializer,
-    UserListSerializer,
-    UserDetailSerializer,
-    UserUpdateSerializer,
-    FollowersListSerializer,
-    ChangeNewsLetterSerializer,
-)
+from src.applications.users.models import (User, UserEmailNewsLetter,
+                                           UserFollowing)
+from src.applications.users.serializers import (ChangeNewsLetterSerializer,
+                                                EmailSerializer,
+                                                FollowersListSerializer,
+                                                FollowingSerializer,
+                                                NewsLetterSerializer,
+                                                UserDetailSerializer,
+                                                UserListSerializer,
+                                                UserUpdateSerializer)
 from src.applications.users.tasks import send_message
 
 from .permissions import IsOwnerOrStaff

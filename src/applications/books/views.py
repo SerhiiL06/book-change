@@ -1,15 +1,17 @@
 from typing import Any
 
-from django.core.cache import cache
 from django.core.exceptions import PermissionDenied
 from django.db.models import Q
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
-from django.views.generic import CreateView, DetailView, ListView, UpdateView, View
+from django.views.generic import (CreateView, DetailView, ListView, UpdateView,
+                                  View)
 
 from src.applications.book_relations.logic import check_bookmark
 from src.applications.book_relations.models import BookRelations
+from src.applications.chat.forms import ShareMessageForm
+from src.applications.chat.models import PrivateMessage
 from src.applications.users.decorators import is_object_owner
 
 from .forms import CreateBookForm, PDFBookForm, UpdateBookForm
