@@ -1,4 +1,8 @@
 from rest_framework import serializers
+from rest_framework.response import Response
+
+from src.applications.chat.models import PrivateMessage
+from src.applications.users.models import User
 
 from .models import BookRelations
 
@@ -30,3 +34,23 @@ class CreateBookRelationSerializer(serializers.ModelSerializer):
             instance.rating = validated_data.get("rating")
         instance.save()
         return instance
+
+
+class ShareBookSerializer(serializers.Serializer):
+    message = serializers.CharField()
+    recipient = serializers.IntegerField()
+
+    def create(self, validated_data):
+
+        recipient = User.objects.filter(id=validated_data["recipient"])
+
+        if not recipient.first():
+            raise Response({"message": "user with this id doesnt exists"})
+
+        msg = PrivateMessage.objects.create(
+            message=validated_data["message"],
+            recipient=recipient.first(),
+            sender=validated_data["sender"],
+        )
+
+        return msg

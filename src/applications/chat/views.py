@@ -1,21 +1,21 @@
 from django.db.models import Q
 from django.shortcuts import HttpResponseRedirect, render
-from django.views.generic import CreateView, View
+from django.views.generic import View
 
 from src.applications.users.models import User
 
-from .forms import ShareMessageForm
 from .logic import get_unique
 from .models import PrivateMessage
 
 
 class ChatView(View):
-    def get(self, request, recipient, *args, **kwargs):
-        user = User.objects.get(id=recipient)
-        messages = PrivateMessage.objects.filter(
-            Q(sender=request.user, recipient=user)
-            | Q(sender=user, recipient=request.user)
-        ).select_related("sender", "recipient")
+    def get(self, request, recipient=None, *args, **kwargs):
+        if recipient:
+            user = User.objects.get(id=recipient)
+            messages = PrivateMessage.objects.filter(
+                Q(sender=request.user, recipient=user)
+                | Q(sender=user, recipient=request.user)
+            ).select_related("sender", "recipient")
 
         recipients = get_unique(request, "sender", "recipient")
         senders = get_unique(request, "recipient", "sender")
@@ -25,10 +25,16 @@ class ChatView(View):
         contact_list = User.objects.filter(id__in=unique_ids)
 
         context = {
-            "messages": messages,
-            "recipient": user,
             "contact_list": contact_list,
         }
+
+        if recipient:
+            context.update(
+                {
+                    "messages": messages,
+                    "recipient": user,
+                }
+            )
         return render(request, "chat/chat.html", context)
 
     def post(self, request, *args, **kwargs):

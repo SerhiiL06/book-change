@@ -1,14 +1,18 @@
 from http import HTTPStatus
 
-from rest_framework import permissions
+from rest_framework import permissions, status, viewsets
+from rest_framework.decorators import action
 from rest_framework.generics import RetrieveUpdateAPIView
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from src.applications.book_relations.models import BookRelations
 from src.applications.book_relations.serializers import (
-    BookRelationsSerializer, CreateBookRelationSerializer)
+    BookRelationsSerializer, CreateBookRelationSerializer, ShareBookSerializer)
 from src.applications.books.models import Book
+from src.applications.chat.models import PrivateMessage
+from src.applications.users.models import User, UserFollowing
+from src.applications.users.serializers import UserSerializer
 
 
 class BookRelationsAPIView(APIView):
@@ -93,3 +97,35 @@ class UserBookmarkListAPIView(APIView):
         queryset = BookRelations.objects.filter(user=request.user, bookmark=True)
         serializer = BookRelationsSerializer(instance=queryset, many=True)
         return Response({"bookmark_list": serializer.data})
+
+
+class ShareBookAPIView(viewsets.GenericViewSet):
+    http_method_names = ["get", "post"]
+    permission_classes = [permissions.IsAuthenticated]
+    queryset = PrivateMessage.objects.all()
+    serializer_class = UserSerializer
+
+    def get_serializer_class(self):
+        if self.action == "list":
+            return super().get_serializer_class()
+        return ShareBookSerializer
+
+    @action(methods=["get"], detail=False)
+    def get_friends_list(self, request, *args, **kwargs):
+        ids = UserFollowing.objects.values_list("user_id").filter(
+            followers_id=request.user.id
+        )
+        queryset = User.objects.filter(id__in=ids)
+
+        serializer = UserSerializer(instance=queryset, many=True)
+
+        return Response(serializer.data, status.HTTP_200_OK)
+
+    @action(methods=["post"], detail=False)
+    def share_message(self, request, *args, **kwargs):
+        data = ShareBookSerializer(data=request.data)
+        data.is_valid(raise_exception=True)
+
+        data.save(sender=request.user)
+
+        return Response({"message": "create"}, status.HTTP_201_CREATED)

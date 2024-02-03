@@ -9,7 +9,7 @@ from django.views.generic import View
 from src.applications.books.models import Book
 from src.applications.chat.forms import ShareMessageForm
 from src.applications.chat.models import PrivateMessage
-from src.applications.users.models import User
+from src.applications.users.models import User, UserFollowing
 
 from .logic import generate_previous_message_for_share
 from .models import BookRelations
